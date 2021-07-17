@@ -1,0 +1,247 @@
+   1               		.file	"keymap.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               		.section	.text.keymap_key_to_keycode,"ax",@progbits
+  12               	.global	keymap_key_to_keycode
+  14               	keymap_key_to_keycode:
+  15               	.LVL0:
+  16               	.LFB4:
+  17               		.file 1 "keymap.c"
+   1:keymap.c      **** /*
+   2:keymap.c      **** Copyright 2011 Jun Wako <wakojun@gmail.com>
+   3:keymap.c      **** 
+   4:keymap.c      **** This program is free software: you can redistribute it and/or modify
+   5:keymap.c      **** it under the terms of the GNU General Public License as published by
+   6:keymap.c      **** the Free Software Foundation, either version 2 of the License, or
+   7:keymap.c      **** (at your option) any later version.
+   8:keymap.c      **** 
+   9:keymap.c      **** This program is distributed in the hope that it will be useful,
+  10:keymap.c      **** but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:keymap.c      **** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  12:keymap.c      **** GNU General Public License for more details.
+  13:keymap.c      **** 
+  14:keymap.c      **** You should have received a copy of the GNU General Public License
+  15:keymap.c      **** along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  16:keymap.c      **** */
+  17:keymap.c      **** 
+  18:keymap.c      **** /*
+  19:keymap.c      ****  * Keymap for Phantom controller
+  20:keymap.c      ****  */
+  21:keymap.c      **** #include <stdint.h>
+  22:keymap.c      **** #include <stdbool.h>
+  23:keymap.c      **** #include <avr/pgmspace.h>
+  24:keymap.c      **** #include "keycode.h"
+  25:keymap.c      **** #include "action.h"
+  26:keymap.c      **** #include "action_macro.h"
+  27:keymap.c      **** #include "report.h"
+  28:keymap.c      **** #include "host.h"
+  29:keymap.c      **** #include "debug.h"
+  30:keymap.c      **** #include "keymap.h"
+  31:keymap.c      **** 
+  32:keymap.c      **** // Convert physical keyboard layout to matrix array
+  33:keymap.c      **** // This is a macro to define keymap easily in keyboard layout form.
+  34:keymap.c      **** #define KEYMAP( \
+  35:keymap.c      ****     K5A,      K5B, K5C, K5D, K5E,   K5F, K5G, K5H, K5I,   K5J, K5K, K5L, K5M,   K5N, K5O, K5P, \
+  36:keymap.c      ****     \
+  37:keymap.c      ****     K4A, K4B, K4C, K4D, K4E, K4F, K4G, K4H, K4I, K4J, K4K, K4L, K4M, K4N,   K4O, K4P, K4Q,   K4R, K
+  38:keymap.c      ****     K3A, K3B, K3C, K3D, K3E, K3F, K3G, K3H, K3I, K3J, K3K, K3L, K3M, K3N,   K3O, K3P, K3Q,   K3R, K
+  39:keymap.c      ****     K2A, K2B, K2C, K2D, K2E, K2F, K2G, K2H, K2I, K2J, K2K, K2L, K2M,                         K2N, K
+  40:keymap.c      ****     K1A, K1B, K1C, K1D, K1E, K1F, K1G, K1H, K1I, K1J, K1K, K1L,                  K1M,        K1N, K
+  41:keymap.c      ****     K0A, K0B,               K0C,                        K0D, K0E,           K0F, K0G, K0H,   K0I,  
+  42:keymap.c      **** ) { \
+  43:keymap.c      **** /* 00 */ { KC_NO,    KC_NO,    KC_##K0A, KC_NO,    KC_NO,    KC_NO,    KC_##K0E, KC_NO    }, \
+  44:keymap.c      **** /* 01 */ { KC_NO,    KC_##K1A, KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_##K1L, KC_NO    }, \
+  45:keymap.c      **** /* 02 */ { KC_##K5A, KC_##K3A, KC_##K4A, KC_##K4B, KC_##K3B, KC_##K2B, KC_##K1B, KC_NO    }, \
+  46:keymap.c      **** /* 03 */ { KC_NO,    KC_##K2A, KC_##K5B, KC_##K4C, KC_##K3C, KC_##K2C, KC_##K1C, KC_NO    }, \
+  47:keymap.c      **** /* 04 */ { KC_##K5E, KC_##K5D, KC_##K5C, KC_##K4D, KC_##K3D, KC_##K2D, KC_##K1D, KC_NO    }, \
+  48:keymap.c      **** /* 05 */ { KC_##K2F, KC_##K3F, KC_##K4F, KC_##K4E, KC_##K3E, KC_##K2E, KC_##K1E, KC_##K1F }, \
+  49:keymap.c      **** /* 06 */ { KC_##K5F, KC_##K3N, KC_##K5J, KC_##K5K, KC_NO,    KC_##K4N, KC_##K2M, KC_##K0C }, \
+  50:keymap.c      **** /* 07 */ { KC_##K2G, KC_##K3G, KC_##K4G, KC_##K4H, KC_##K3H, KC_##K2H, KC_##K1H, KC_##K1G }, \
+  51:keymap.c      **** /* 08 */ { KC_##K5G, KC_##K3M, KC_##K4M, KC_##K4I, KC_##K3I, KC_##K2I, KC_##K1I, KC_NO    }, \
+  52:keymap.c      **** /* 09 */ { KC_NO,    KC_##K5H, KC_##K5I, KC_##K4J, KC_##K3J, KC_##K2J, KC_##K1J, KC_NO    }, \
+  53:keymap.c      **** /* 0A */ { KC_##K2L, KC_##K3L, KC_##K4L, KC_##K4K, KC_##K3K, KC_##K2K, KC_NO,    KC_##K1K }, \
+  54:keymap.c      **** /* 0B */ { KC_NO,    KC_##K2N, KC_##K3O, KC_##K5L, KC_##K3R, KC_##K1N, KC_##K4R, KC_##K0G }, \
+  55:keymap.c      **** /* 0C */ { KC_##K0I, KC_##K2O, KC_##K4O, KC_##K5M, KC_##K3S, KC_##K1O, KC_##K4S, KC_##K0H }, \
+  56:keymap.c      **** /* 0D */ { KC_##K0J, KC_##K2P, KC_##K4Q, KC_##K3Q, KC_##K3T, KC_##K1P, KC_##K4T, KC_##K4U }, \
+  57:keymap.c      **** /* 0E */ { KC_##K1M, KC_NO,    KC_##K4P, KC_##K3P, KC_##K3U, KC_##K1Q, KC_##K5P, KC_##K0F }, \
+  58:keymap.c      **** /* 0F */ { KC_##K0B, KC_NO,    KC_NO,    KC_##K5N, KC_##K5O, KC_NO,    KC_NO,    KC_##K0D }  \
+  59:keymap.c      **** }
+  60:keymap.c      **** /*         0         1         2         3          4         5         6           7       */
+  61:keymap.c      **** //ToDo: Finish changing key codes ESC, GRV, PSCR, SLCK, PAUS, F10, F11, F12.. was GRV, ESC, MUTE, V
+  62:keymap.c      **** static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  63:keymap.c      **** KEYMAP(
+  64:keymap.c      ****         ESC, F1, F2, F3, F4,  F5, F6, F7, F8,  F9, F10, F11, F12,                PSCR,SLCK,PAUS,
+  65:keymap.c      ****         GRV, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS, EQL, BSPC,     INS,  HOME, PGU
+  66:keymap.c      ****         TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC, RBRC,BSLS,     DEL, END, PGDN,
+  67:keymap.c      ****         LCTL,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,     ENT,                      
+  68:keymap.c      ****         LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,          RSFT,          UP,        
+  69:keymap.c      ****         LCTL,LALT,                  SPC,                           RGUI, RALT,     LEFT,DOWN,RGHT, 
+  70:keymap.c      **** )
+  71:keymap.c      **** };
+  72:keymap.c      **** static const uint16_t PROGMEM fn_actions[] = {
+  73:keymap.c      **** };
+  74:keymap.c      **** 
+  75:keymap.c      **** #define KEYMAPS_SIZE    (sizeof(keymaps) / sizeof(keymaps[0]))
+  76:keymap.c      **** #define FN_ACTIONS_SIZE (sizeof(fn_actions) / sizeof(fn_actions[0]))
+  77:keymap.c      **** 
+  78:keymap.c      **** /* translates key to keycode */
+  79:keymap.c      **** uint8_t keymap_key_to_keycode(uint8_t layer, keypos_t key)
+  80:keymap.c      **** {
+  18               		.loc 1 80 1 view -0
+  19               		.cfi_startproc
+  20               	/* prologue: function */
+  21               	/* frame size = 0 */
+  22               	/* stack size = 0 */
+  23               	.L__stack_usage = 0
+  81:keymap.c      ****     if (layer < KEYMAPS_SIZE) {
+  24               		.loc 1 81 5 view .LVU1
+  25               	.LBB2:
+  82:keymap.c      ****         return pgm_read_byte(&keymaps[(layer)][(key.row)][(key.col)]);
+  26               		.loc 1 82 16 is_stmt 0 view .LVU2
+  27 0000 98E0      		ldi r25,lo8(8)
+  28 0002 799F      		mul r23,r25
+  29 0004 F001      		movw r30,r0
+  30 0006 1124      		clr __zero_reg__
+  31 0008 E60F      		add r30,r22
+  32 000a F11D      		adc r31,__zero_reg__
+  33 000c E050      		subi r30,lo8(-(keymaps))
+  34 000e F040      		sbci r31,hi8(-(keymaps))
+  35               	.LBE2:
+  83:keymap.c      ****     } else {
+  84:keymap.c      ****         // fall back to layer 0
+  85:keymap.c      ****         return pgm_read_byte(&keymaps[0][(key.row)][(key.col)]);
+  36               		.loc 1 85 9 is_stmt 1 view .LVU3
+  37               	.LBB3:
+  38               		.loc 1 85 16 view .LVU4
+  39               	.LVL1:
+  40               		.loc 1 85 16 view .LVU5
+  41               		.loc 1 85 16 view .LVU6
+  42               	/* #APP */
+  43               	 ;  85 "keymap.c" 1
+  44 0010 8491      		lpm r24, Z
+  45               		
+  46               	 ;  0 "" 2
+  47               	.LVL2:
+  48               		.loc 1 85 16 view .LVU7
+  49               	/* #NOAPP */
+  50               	/* epilogue start */
+  51               	.LBE3:
+  86:keymap.c      ****     }
+  87:keymap.c      **** }
+  52               		.loc 1 87 1 is_stmt 0 view .LVU8
+  53 0012 0895      		ret
+  54               		.cfi_endproc
+  55               	.LFE4:
+  57               		.section	.text.keymap_fn_to_action,"ax",@progbits
+  58               	.global	keymap_fn_to_action
+  60               	keymap_fn_to_action:
+  61               	.LVL3:
+  62               	.LFB5:
+  88:keymap.c      **** 
+  89:keymap.c      **** /* translates Fn keycode to action */
+  90:keymap.c      **** action_t keymap_fn_to_action(uint8_t keycode)
+  91:keymap.c      **** {
+  63               		.loc 1 91 1 is_stmt 1 view -0
+  64               		.cfi_startproc
+  65               	/* prologue: function */
+  66               	/* frame size = 0 */
+  67               	/* stack size = 0 */
+  68               	.L__stack_usage = 0
+  92:keymap.c      ****     action_t action;
+  69               		.loc 1 92 5 view .LVU10
+  93:keymap.c      ****     if (FN_INDEX(keycode) < FN_ACTIONS_SIZE) {
+  70               		.loc 1 93 5 view .LVU11
+  94:keymap.c      ****         action.code = pgm_read_word(&fn_actions[FN_INDEX(keycode)]);
+  95:keymap.c      ****     } else {
+  96:keymap.c      ****         action.code = ACTION_NO;
+  71               		.loc 1 96 9 view .LVU12
+  97:keymap.c      ****     }
+  98:keymap.c      ****     return action;
+  72               		.loc 1 98 5 view .LVU13
+  99:keymap.c      **** }...
+  73               		.loc 1 99 1 is_stmt 0 view .LVU14
+  74 0000 90E0      		ldi r25,0
+  75 0002 80E0      		ldi r24,0
+  76               	.LVL4:
+  77               	/* epilogue start */
+  78               		.loc 1 99 1 view .LVU15
+  79 0004 0895      		ret
+  80               		.cfi_endproc
+  81               	.LFE5:
+  83               		.section	.progmem.data.keymaps,"a"
+  86               	keymaps:
+  87 0000 00        		.string	""
+  88 0001 00        		.string	""
+  89 0002 E000      		.string	"\340"
+  90 0004 00        		.string	""
+  91 0005 00        		.string	""
+  92 0006 E600      		.string	"\346"
+  93 0008 00        		.string	""
+  94 0009 E100      		.string	"\341"
+  95 000b 00        		.string	""
+  96 000c 00        		.string	""
+  97 000d 00        		.string	""
+  98 000e E500      		.string	"\345"
+  99 0010 292B 351E 		.string	")+5\036\024\004\035"
+  99      1404 1D00 
+ 100 0018 00        		.string	""
+ 101 0019 E03A 1F1A 		.string	"\340:\037\032\026\033"
+ 101      161B 00
+ 102 0020 3D3C 3B20 		.string	"=<; \b\007\006"
+ 102      0807 0600 
+ 103 0028 0A17 2221 		.ascii	"\n\027\"!\025\t\031\005"
+ 103      1509 1905 
+ 104 0030 3E31 4243 		.string	">1BC"
+ 104      00
+ 105 0035 2A28 2C   		.ascii	"*(,"
+ 106 0038 0B1C 2324 		.ascii	"\013\034#$\030\r\020\021"
+ 106      180D 1011 
+ 107 0040 3F30 2E25 		.string	"?0.%\f\0166"
+ 107      0C0E 3600 
+ 108 0048 00        		.string	""
+ 109 0049 4041 2612 		.string	"@A&\022\0177"
+ 109      0F37 00
+ 110 0050 342F 2D27 		.string	"4/-'\0233"
+ 110      1333 00
+ 111 0057 38        		.ascii	"8"
+ 112 0058 00        		.string	""
+ 113 0059 5C4C 445F 		.ascii	"\\LD_YSQ"
+ 113      5953 51
+ 114 0060 625D 4945 		.ascii	"b]IE`ZTO"
+ 114      605A 544F 
+ 115 0068 635E 4B4E 		.ascii	"c^KNa[UV"
+ 115      615B 5556 
+ 116 0070 5200      		.string	"R"
+ 117 0072 4A4D 5758 		.ascii	"JMWXHP"
+ 117      4850 
+ 118 0078 E200      		.string	"\342"
+ 119 007a 00        		.string	""
+ 120 007b 4647 00   		.string	"FG"
+ 121 007e 00        		.string	""
+ 122 007f E7        		.ascii	"\347"
+ 123               		.text
+ 124               	.Letext0:
+ 125               		.file 2 "/usr/avr/include/stdint.h"
+ 126               		.file 3 "./tmk_keyboard/tmk_core/common/keycode.h"
+ 127               		.file 4 "./tmk_keyboard/tmk_core/common/keyboard.h"
+ 128               		.file 5 "./tmk_keyboard/tmk_core/common/action_code.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 keymap.c
+     /tmp/cc25hPHk.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc25hPHk.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc25hPHk.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc25hPHk.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/cc25hPHk.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc25hPHk.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc25hPHk.s:14     .text.keymap_key_to_keycode:0000000000000000 keymap_key_to_keycode
+     /tmp/cc25hPHk.s:86     .progmem.data.keymaps:0000000000000000 keymaps
+     /tmp/cc25hPHk.s:60     .text.keymap_fn_to_action:0000000000000000 keymap_fn_to_action
+
+NO UNDEFINED SYMBOLS

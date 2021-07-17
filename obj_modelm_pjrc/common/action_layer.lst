@@ -1,0 +1,1219 @@
+   1               		.file	"action_layer.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               		.section	.text.default_layer_state_set,"ax",@progbits
+  13               	default_layer_state_set:
+  14               	.LVL0:
+  15               	.LFB4:
+  16               		.file 1 "./tmk_keyboard/tmk_core/common/action_layer.c"
+   1:./tmk_keyboard/tmk_core/common/action_layer.c **** #include <stdint.h>
+   2:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "keyboard.h"
+   3:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "action.h"
+   4:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "util.h"
+   5:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "action_layer.h"
+   6:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "hook.h"
+   7:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+   8:./tmk_keyboard/tmk_core/common/action_layer.c **** #ifdef DEBUG_ACTION
+   9:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "debug.h"
+  10:./tmk_keyboard/tmk_core/common/action_layer.c **** #else
+  11:./tmk_keyboard/tmk_core/common/action_layer.c **** #include "nodebug.h"
+  12:./tmk_keyboard/tmk_core/common/action_layer.c **** #endif
+  13:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  14:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  15:./tmk_keyboard/tmk_core/common/action_layer.c **** /* 
+  16:./tmk_keyboard/tmk_core/common/action_layer.c ****  * Default Layer State
+  17:./tmk_keyboard/tmk_core/common/action_layer.c ****  */
+  18:./tmk_keyboard/tmk_core/common/action_layer.c **** uint32_t default_layer_state = 0;
+  19:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  20:./tmk_keyboard/tmk_core/common/action_layer.c **** static void default_layer_state_set(uint32_t state)
+  21:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  17               		.loc 1 21 1 view -0
+  18               		.cfi_startproc
+  19               	/* prologue: function */
+  20               	/* frame size = 0 */
+  21               	/* stack size = 0 */
+  22               	.L__stack_usage = 0
+  22:./tmk_keyboard/tmk_core/common/action_layer.c ****     debug("default_layer_state: ");
+  23               		.loc 1 22 5 view .LVU1
+  23:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_debug(); debug(" to ");
+  24               		.loc 1 23 5 view .LVU2
+  25               		.loc 1 23 28 view .LVU3
+  24:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state = state;
+  26               		.loc 1 24 5 view .LVU4
+  27               		.loc 1 24 25 is_stmt 0 view .LVU5
+  28 0000 6093 0000 		sts default_layer_state,r22
+  29 0004 7093 0000 		sts default_layer_state+1,r23
+  30 0008 8093 0000 		sts default_layer_state+2,r24
+  31 000c 9093 0000 		sts default_layer_state+3,r25
+  25:./tmk_keyboard/tmk_core/common/action_layer.c ****     hook_default_layer_change(default_layer_state);
+  32               		.loc 1 25 5 is_stmt 1 view .LVU6
+  33 0010 0E94 0000 		call hook_default_layer_change
+  34               	.LVL1:
+  26:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_debug(); debug("\n");
+  35               		.loc 1 26 5 view .LVU7
+  36               		.loc 1 26 28 view .LVU8
+  27:./tmk_keyboard/tmk_core/common/action_layer.c ****     clear_keyboard_but_mods(); // To avoid stuck keys
+  37               		.loc 1 27 5 view .LVU9
+  38 0014 0C94 0000 		jmp clear_keyboard_but_mods
+  39               	.LVL2:
+  40               		.cfi_endproc
+  41               	.LFE4:
+  43               		.section	.text.layer_state_set,"ax",@progbits
+  45               	layer_state_set:
+  46               	.LVL3:
+  47               	.LFB10:
+  28:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  29:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  30:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_debug(void)
+  31:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  32:./tmk_keyboard/tmk_core/common/action_layer.c ****     dprintf("%08lX(%u)", default_layer_state, biton32(default_layer_state));
+  33:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  34:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  35:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_set(uint32_t state)
+  36:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  37:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(state);
+  38:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  39:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  40:./tmk_keyboard/tmk_core/common/action_layer.c **** #ifndef NO_ACTION_LAYER
+  41:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_or(uint32_t state)
+  42:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  43:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state | state);
+  44:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  45:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_and(uint32_t state)
+  46:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  47:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state & state);
+  48:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  49:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_xor(uint32_t state)
+  50:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  51:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state ^ state);
+  52:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  53:./tmk_keyboard/tmk_core/common/action_layer.c **** #endif
+  54:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  55:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  56:./tmk_keyboard/tmk_core/common/action_layer.c **** #ifndef NO_ACTION_LAYER
+  57:./tmk_keyboard/tmk_core/common/action_layer.c **** /* 
+  58:./tmk_keyboard/tmk_core/common/action_layer.c ****  * Keymap Layer State
+  59:./tmk_keyboard/tmk_core/common/action_layer.c ****  */
+  60:./tmk_keyboard/tmk_core/common/action_layer.c **** uint32_t layer_state = 0;
+  61:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  62:./tmk_keyboard/tmk_core/common/action_layer.c **** static void layer_state_set(uint32_t state)
+  63:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+  48               		.loc 1 63 1 view -0
+  49               		.cfi_startproc
+  50               	/* prologue: function */
+  51               	/* frame size = 0 */
+  52               	/* stack size = 0 */
+  53               	.L__stack_usage = 0
+  64:./tmk_keyboard/tmk_core/common/action_layer.c ****     dprint("layer_state: ");
+  54               		.loc 1 64 5 view .LVU11
+  65:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_debug(); dprint(" to ");
+  55               		.loc 1 65 5 view .LVU12
+  56               		.loc 1 65 20 view .LVU13
+  66:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state = state;
+  57               		.loc 1 66 5 view .LVU14
+  58               		.loc 1 66 17 is_stmt 0 view .LVU15
+  59 0000 6093 0000 		sts layer_state,r22
+  60 0004 7093 0000 		sts layer_state+1,r23
+  61 0008 8093 0000 		sts layer_state+2,r24
+  62 000c 9093 0000 		sts layer_state+3,r25
+  67:./tmk_keyboard/tmk_core/common/action_layer.c ****     hook_layer_change(layer_state);
+  63               		.loc 1 67 5 is_stmt 1 view .LVU16
+  64 0010 0E94 0000 		call hook_layer_change
+  65               	.LVL4:
+  68:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_debug(); dprintln();
+  66               		.loc 1 68 5 view .LVU17
+  67               		.loc 1 68 20 view .LVU18
+  69:./tmk_keyboard/tmk_core/common/action_layer.c ****     clear_keyboard_but_mods(); // To avoid stuck keys
+  68               		.loc 1 69 5 view .LVU19
+  69 0014 0C94 0000 		jmp clear_keyboard_but_mods
+  70               	.LVL5:
+  71               		.cfi_endproc
+  72               	.LFE10:
+  74               		.section	.text.default_layer_debug,"ax",@progbits
+  75               	.global	default_layer_debug
+  77               	default_layer_debug:
+  78               	.LFB5:
+  31:./tmk_keyboard/tmk_core/common/action_layer.c ****     dprintf("%08lX(%u)", default_layer_state, biton32(default_layer_state));
+  79               		.loc 1 31 1 view -0
+  80               		.cfi_startproc
+  81               	/* prologue: function */
+  82               	/* frame size = 0 */
+  83               	/* stack size = 0 */
+  84               	.L__stack_usage = 0
+  32:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  85               		.loc 1 32 5 view .LVU21
+  86               	/* epilogue start */
+  33:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  87               		.loc 1 33 1 is_stmt 0 view .LVU22
+  88 0000 0895      		ret
+  89               		.cfi_endproc
+  90               	.LFE5:
+  92               		.section	.text.default_layer_set,"ax",@progbits
+  93               	.global	default_layer_set
+  95               	default_layer_set:
+  96               	.LVL6:
+  97               	.LFB6:
+  36:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(state);
+  98               		.loc 1 36 1 is_stmt 1 view -0
+  99               		.cfi_startproc
+ 100               	/* prologue: function */
+ 101               	/* frame size = 0 */
+ 102               	/* stack size = 0 */
+ 103               	.L__stack_usage = 0
+  37:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 104               		.loc 1 37 5 view .LVU24
+ 105 0000 0C94 0000 		jmp default_layer_state_set
+ 106               	.LVL7:
+  37:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 107               		.loc 1 37 5 is_stmt 0 view .LVU25
+ 108               		.cfi_endproc
+ 109               	.LFE6:
+ 111               		.section	.text.default_layer_or,"ax",@progbits
+ 112               	.global	default_layer_or
+ 114               	default_layer_or:
+ 115               	.LVL8:
+ 116               	.LFB7:
+  42:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state | state);
+ 117               		.loc 1 42 1 is_stmt 1 view -0
+ 118               		.cfi_startproc
+  42:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state | state);
+ 119               		.loc 1 42 1 is_stmt 0 view .LVU27
+ 120 0000 CF93      		push r28
+ 121               	.LCFI0:
+ 122               		.cfi_def_cfa_offset 3
+ 123               		.cfi_offset 28, -2
+ 124 0002 DF93      		push r29
+ 125               	.LCFI1:
+ 126               		.cfi_def_cfa_offset 4
+ 127               		.cfi_offset 29, -3
+ 128 0004 00D0      		rcall .
+ 129 0006 00D0      		rcall .
+ 130               	.LCFI2:
+ 131               		.cfi_def_cfa_offset 8
+ 132 0008 CDB7      		in r28,__SP_L__
+ 133 000a DEB7      		in r29,__SP_H__
+ 134               	.LCFI3:
+ 135               		.cfi_def_cfa_register 28
+ 136               	/* prologue: function */
+ 137               	/* frame size = 4 */
+ 138               	/* stack size = 6 */
+ 139               	.L__stack_usage = 6
+ 140 000c 6983      		std Y+1,r22
+ 141 000e 7A83      		std Y+2,r23
+ 142 0010 8B83      		std Y+3,r24
+ 143 0012 9C83      		std Y+4,r25
+  43:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 144               		.loc 1 43 5 is_stmt 1 view .LVU28
+ 145 0014 8091 0000 		lds r24,default_layer_state
+ 146 0018 9091 0000 		lds r25,default_layer_state+1
+ 147 001c A091 0000 		lds r26,default_layer_state+2
+ 148 0020 B091 0000 		lds r27,default_layer_state+3
+ 149 0024 2981      		ldd r18,Y+1
+ 150 0026 3A81      		ldd r19,Y+2
+ 151 0028 4B81      		ldd r20,Y+3
+ 152 002a 5C81      		ldd r21,Y+4
+ 153 002c 282B      		or r18,r24
+ 154 002e 392B      		or r19,r25
+ 155 0030 4A2B      		or r20,r26
+ 156 0032 5B2B      		or r21,r27
+ 157 0034 2983      		std Y+1,r18
+ 158 0036 3A83      		std Y+2,r19
+ 159 0038 4B83      		std Y+3,r20
+ 160 003a 5C83      		std Y+4,r21
+ 161 003c CA01      		movw r24,r20
+ 162 003e B901      		movw r22,r18
+ 163               	.LVL9:
+ 164               	/* epilogue start */
+  44:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_and(uint32_t state)
+ 165               		.loc 1 44 1 is_stmt 0 view .LVU29
+ 166 0040 0F90      		pop __tmp_reg__
+ 167 0042 0F90      		pop __tmp_reg__
+ 168 0044 0F90      		pop __tmp_reg__
+ 169 0046 0F90      		pop __tmp_reg__
+ 170 0048 DF91      		pop r29
+ 171 004a CF91      		pop r28
+  43:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 172               		.loc 1 43 5 view .LVU30
+ 173 004c 0C94 0000 		jmp default_layer_state_set
+ 174               	.LVL10:
+ 175               		.cfi_endproc
+ 176               	.LFE7:
+ 178               		.section	.text.default_layer_and,"ax",@progbits
+ 179               	.global	default_layer_and
+ 181               	default_layer_and:
+ 182               	.LVL11:
+ 183               	.LFB8:
+  46:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state & state);
+ 184               		.loc 1 46 1 is_stmt 1 view -0
+ 185               		.cfi_startproc
+  46:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state & state);
+ 186               		.loc 1 46 1 is_stmt 0 view .LVU32
+ 187 0000 CF93      		push r28
+ 188               	.LCFI4:
+ 189               		.cfi_def_cfa_offset 3
+ 190               		.cfi_offset 28, -2
+ 191 0002 DF93      		push r29
+ 192               	.LCFI5:
+ 193               		.cfi_def_cfa_offset 4
+ 194               		.cfi_offset 29, -3
+ 195 0004 00D0      		rcall .
+ 196 0006 00D0      		rcall .
+ 197               	.LCFI6:
+ 198               		.cfi_def_cfa_offset 8
+ 199 0008 CDB7      		in r28,__SP_L__
+ 200 000a DEB7      		in r29,__SP_H__
+ 201               	.LCFI7:
+ 202               		.cfi_def_cfa_register 28
+ 203               	/* prologue: function */
+ 204               	/* frame size = 4 */
+ 205               	/* stack size = 6 */
+ 206               	.L__stack_usage = 6
+ 207 000c 6983      		std Y+1,r22
+ 208 000e 7A83      		std Y+2,r23
+ 209 0010 8B83      		std Y+3,r24
+ 210 0012 9C83      		std Y+4,r25
+  47:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 211               		.loc 1 47 5 is_stmt 1 view .LVU33
+ 212 0014 8091 0000 		lds r24,default_layer_state
+ 213 0018 9091 0000 		lds r25,default_layer_state+1
+ 214 001c A091 0000 		lds r26,default_layer_state+2
+ 215 0020 B091 0000 		lds r27,default_layer_state+3
+ 216 0024 2981      		ldd r18,Y+1
+ 217 0026 3A81      		ldd r19,Y+2
+ 218 0028 4B81      		ldd r20,Y+3
+ 219 002a 5C81      		ldd r21,Y+4
+ 220 002c 2823      		and r18,r24
+ 221 002e 3923      		and r19,r25
+ 222 0030 4A23      		and r20,r26
+ 223 0032 5B23      		and r21,r27
+ 224 0034 2983      		std Y+1,r18
+ 225 0036 3A83      		std Y+2,r19
+ 226 0038 4B83      		std Y+3,r20
+ 227 003a 5C83      		std Y+4,r21
+ 228 003c CA01      		movw r24,r20
+ 229 003e B901      		movw r22,r18
+ 230               	.LVL12:
+ 231               	/* epilogue start */
+  48:./tmk_keyboard/tmk_core/common/action_layer.c **** void default_layer_xor(uint32_t state)
+ 232               		.loc 1 48 1 is_stmt 0 view .LVU34
+ 233 0040 0F90      		pop __tmp_reg__
+ 234 0042 0F90      		pop __tmp_reg__
+ 235 0044 0F90      		pop __tmp_reg__
+ 236 0046 0F90      		pop __tmp_reg__
+ 237 0048 DF91      		pop r29
+ 238 004a CF91      		pop r28
+  47:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 239               		.loc 1 47 5 view .LVU35
+ 240 004c 0C94 0000 		jmp default_layer_state_set
+ 241               	.LVL13:
+ 242               		.cfi_endproc
+ 243               	.LFE8:
+ 245               		.section	.text.default_layer_xor,"ax",@progbits
+ 246               	.global	default_layer_xor
+ 248               	default_layer_xor:
+ 249               	.LVL14:
+ 250               	.LFB9:
+  50:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state ^ state);
+ 251               		.loc 1 50 1 is_stmt 1 view -0
+ 252               		.cfi_startproc
+  50:./tmk_keyboard/tmk_core/common/action_layer.c ****     default_layer_state_set(default_layer_state ^ state);
+ 253               		.loc 1 50 1 is_stmt 0 view .LVU37
+ 254 0000 CF93      		push r28
+ 255               	.LCFI8:
+ 256               		.cfi_def_cfa_offset 3
+ 257               		.cfi_offset 28, -2
+ 258 0002 DF93      		push r29
+ 259               	.LCFI9:
+ 260               		.cfi_def_cfa_offset 4
+ 261               		.cfi_offset 29, -3
+ 262 0004 00D0      		rcall .
+ 263 0006 00D0      		rcall .
+ 264               	.LCFI10:
+ 265               		.cfi_def_cfa_offset 8
+ 266 0008 CDB7      		in r28,__SP_L__
+ 267 000a DEB7      		in r29,__SP_H__
+ 268               	.LCFI11:
+ 269               		.cfi_def_cfa_register 28
+ 270               	/* prologue: function */
+ 271               	/* frame size = 4 */
+ 272               	/* stack size = 6 */
+ 273               	.L__stack_usage = 6
+ 274 000c 6983      		std Y+1,r22
+ 275 000e 7A83      		std Y+2,r23
+ 276 0010 8B83      		std Y+3,r24
+ 277 0012 9C83      		std Y+4,r25
+  51:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 278               		.loc 1 51 5 is_stmt 1 view .LVU38
+ 279 0014 8091 0000 		lds r24,default_layer_state
+ 280 0018 9091 0000 		lds r25,default_layer_state+1
+ 281 001c A091 0000 		lds r26,default_layer_state+2
+ 282 0020 B091 0000 		lds r27,default_layer_state+3
+ 283 0024 2981      		ldd r18,Y+1
+ 284 0026 3A81      		ldd r19,Y+2
+ 285 0028 4B81      		ldd r20,Y+3
+ 286 002a 5C81      		ldd r21,Y+4
+ 287 002c 2827      		eor r18,r24
+ 288 002e 3927      		eor r19,r25
+ 289 0030 4A27      		eor r20,r26
+ 290 0032 5B27      		eor r21,r27
+ 291 0034 2983      		std Y+1,r18
+ 292 0036 3A83      		std Y+2,r19
+ 293 0038 4B83      		std Y+3,r20
+ 294 003a 5C83      		std Y+4,r21
+ 295 003c CA01      		movw r24,r20
+ 296 003e B901      		movw r22,r18
+ 297               	.LVL15:
+ 298               	/* epilogue start */
+  52:./tmk_keyboard/tmk_core/common/action_layer.c **** #endif
+ 299               		.loc 1 52 1 is_stmt 0 view .LVU39
+ 300 0040 0F90      		pop __tmp_reg__
+ 301 0042 0F90      		pop __tmp_reg__
+ 302 0044 0F90      		pop __tmp_reg__
+ 303 0046 0F90      		pop __tmp_reg__
+ 304 0048 DF91      		pop r29
+ 305 004a CF91      		pop r28
+  51:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 306               		.loc 1 51 5 view .LVU40
+ 307 004c 0C94 0000 		jmp default_layer_state_set
+ 308               	.LVL16:
+ 309               		.cfi_endproc
+ 310               	.LFE9:
+ 312               		.section	.text.layer_clear,"ax",@progbits
+ 313               	.global	layer_clear
+ 315               	layer_clear:
+ 316               	.LFB11:
+  70:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  71:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  72:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_clear(void)
+  73:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 317               		.loc 1 73 1 is_stmt 1 view -0
+ 318               		.cfi_startproc
+ 319               	/* prologue: function */
+ 320               	/* frame size = 0 */
+ 321               	/* stack size = 0 */
+ 322               	.L__stack_usage = 0
+  74:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(0);
+ 323               		.loc 1 74 5 view .LVU42
+ 324 0000 60E0      		ldi r22,0
+ 325 0002 70E0      		ldi r23,0
+ 326 0004 CB01      		movw r24,r22
+ 327 0006 0C94 0000 		jmp layer_state_set
+ 328               	.LVL17:
+ 329               		.cfi_endproc
+ 330               	.LFE11:
+ 332               		.section	.text.layer_move,"ax",@progbits
+ 333               	.global	layer_move
+ 335               	layer_move:
+ 336               	.LVL18:
+ 337               	.LFB12:
+  75:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+  76:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  77:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_move(uint8_t layer)
+  78:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 338               		.loc 1 78 1 view -0
+ 339               		.cfi_startproc
+ 340               		.loc 1 78 1 is_stmt 0 view .LVU44
+ 341 0000 0F93      		push r16
+ 342               	.LCFI12:
+ 343               		.cfi_def_cfa_offset 3
+ 344               		.cfi_offset 16, -2
+ 345 0002 1F93      		push r17
+ 346               	.LCFI13:
+ 347               		.cfi_def_cfa_offset 4
+ 348               		.cfi_offset 17, -3
+ 349 0004 CF93      		push r28
+ 350               	.LCFI14:
+ 351               		.cfi_def_cfa_offset 5
+ 352               		.cfi_offset 28, -4
+ 353 0006 DF93      		push r29
+ 354               	.LCFI15:
+ 355               		.cfi_def_cfa_offset 6
+ 356               		.cfi_offset 29, -5
+ 357 0008 00D0      		rcall .
+ 358 000a 00D0      		rcall .
+ 359               	.LCFI16:
+ 360               		.cfi_def_cfa_offset 10
+ 361 000c CDB7      		in r28,__SP_L__
+ 362 000e DEB7      		in r29,__SP_H__
+ 363               	.LCFI17:
+ 364               		.cfi_def_cfa_register 28
+ 365               	/* prologue: function */
+ 366               	/* frame size = 4 */
+ 367               	/* stack size = 8 */
+ 368               	.L__stack_usage = 8
+  79:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(1UL<<layer);
+ 369               		.loc 1 79 5 is_stmt 1 view .LVU45
+ 370 0010 41E0      		ldi r20,lo8(1)
+ 371 0012 50E0      		ldi r21,0
+ 372 0014 60E0      		ldi r22,0
+ 373 0016 70E0      		ldi r23,0
+ 374 0018 8A01      		movw r16,r20
+ 375 001a 9B01      		movw r18,r22
+ 376 001c 00C0      		rjmp 2f
+ 377               		1:
+ 378 001e 000F      		lsl r16
+ 379 0020 111F      		rol r17
+ 380 0022 221F      		rol r18
+ 381 0024 331F      		rol r19
+ 382               		2:
+ 383 0026 8A95      		dec r24
+ 384 0028 02F4      		brpl 1b
+ 385 002a 0983      		std Y+1,r16
+ 386 002c 1A83      		std Y+2,r17
+ 387 002e 2B83      		std Y+3,r18
+ 388 0030 3C83      		std Y+4,r19
+ 389 0032 C901      		movw r24,r18
+ 390               	.LVL19:
+ 391               		.loc 1 79 5 is_stmt 0 view .LVU46
+ 392 0034 B801      		movw r22,r16
+ 393               	/* epilogue start */
+  80:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 394               		.loc 1 80 1 view .LVU47
+ 395 0036 0F90      		pop __tmp_reg__
+ 396 0038 0F90      		pop __tmp_reg__
+ 397 003a 0F90      		pop __tmp_reg__
+ 398 003c 0F90      		pop __tmp_reg__
+ 399 003e DF91      		pop r29
+ 400 0040 CF91      		pop r28
+ 401 0042 1F91      		pop r17
+ 402 0044 0F91      		pop r16
+  79:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(1UL<<layer);
+ 403               		.loc 1 79 5 view .LVU48
+ 404 0046 0C94 0000 		jmp layer_state_set
+ 405               	.LVL20:
+ 406               		.cfi_endproc
+ 407               	.LFE12:
+ 409               		.section	.text.layer_on,"ax",@progbits
+ 410               	.global	layer_on
+ 412               	layer_on:
+ 413               	.LVL21:
+ 414               	.LFB13:
+  81:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  82:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_on(uint8_t layer)
+  83:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 415               		.loc 1 83 1 is_stmt 1 view -0
+ 416               		.cfi_startproc
+ 417               		.loc 1 83 1 is_stmt 0 view .LVU50
+ 418 0000 0F93      		push r16
+ 419               	.LCFI18:
+ 420               		.cfi_def_cfa_offset 3
+ 421               		.cfi_offset 16, -2
+ 422 0002 1F93      		push r17
+ 423               	.LCFI19:
+ 424               		.cfi_def_cfa_offset 4
+ 425               		.cfi_offset 17, -3
+ 426 0004 CF93      		push r28
+ 427               	.LCFI20:
+ 428               		.cfi_def_cfa_offset 5
+ 429               		.cfi_offset 28, -4
+ 430 0006 DF93      		push r29
+ 431               	.LCFI21:
+ 432               		.cfi_def_cfa_offset 6
+ 433               		.cfi_offset 29, -5
+ 434 0008 00D0      		rcall .
+ 435 000a 00D0      		rcall .
+ 436               	.LCFI22:
+ 437               		.cfi_def_cfa_offset 10
+ 438 000c CDB7      		in r28,__SP_L__
+ 439 000e DEB7      		in r29,__SP_H__
+ 440               	.LCFI23:
+ 441               		.cfi_def_cfa_register 28
+ 442               	/* prologue: function */
+ 443               	/* frame size = 4 */
+ 444               	/* stack size = 8 */
+ 445               	.L__stack_usage = 8
+  84:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state | (1UL<<layer));
+ 446               		.loc 1 84 5 is_stmt 1 view .LVU51
+ 447               		.loc 1 84 39 is_stmt 0 view .LVU52
+ 448 0010 41E0      		ldi r20,lo8(1)
+ 449 0012 50E0      		ldi r21,0
+ 450 0014 60E0      		ldi r22,0
+ 451 0016 70E0      		ldi r23,0
+ 452 0018 00C0      		rjmp 2f
+ 453               		1:
+ 454 001a 440F      		lsl r20
+ 455 001c 551F      		rol r21
+ 456 001e 661F      		rol r22
+ 457 0020 771F      		rol r23
+ 458               		2:
+ 459 0022 8A95      		dec r24
+ 460 0024 02F4      		brpl 1b
+ 461               		.loc 1 84 5 view .LVU53
+ 462 0026 8091 0000 		lds r24,layer_state
+ 463 002a 9091 0000 		lds r25,layer_state+1
+ 464 002e A091 0000 		lds r26,layer_state+2
+ 465 0032 B091 0000 		lds r27,layer_state+3
+ 466               	.LVL22:
+ 467               		.loc 1 84 5 view .LVU54
+ 468 0036 8A01      		movw r16,r20
+ 469 0038 9B01      		movw r18,r22
+ 470 003a 082B      		or r16,r24
+ 471 003c 192B      		or r17,r25
+ 472 003e 2A2B      		or r18,r26
+ 473 0040 3B2B      		or r19,r27
+ 474 0042 0983      		std Y+1,r16
+ 475 0044 1A83      		std Y+2,r17
+ 476 0046 2B83      		std Y+3,r18
+ 477 0048 3C83      		std Y+4,r19
+ 478 004a C901      		movw r24,r18
+ 479 004c B801      		movw r22,r16
+ 480               	/* epilogue start */
+  85:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 481               		.loc 1 85 1 view .LVU55
+ 482 004e 0F90      		pop __tmp_reg__
+ 483 0050 0F90      		pop __tmp_reg__
+ 484 0052 0F90      		pop __tmp_reg__
+ 485 0054 0F90      		pop __tmp_reg__
+ 486 0056 DF91      		pop r29
+ 487 0058 CF91      		pop r28
+ 488 005a 1F91      		pop r17
+ 489 005c 0F91      		pop r16
+  84:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state | (1UL<<layer));
+ 490               		.loc 1 84 5 view .LVU56
+ 491 005e 0C94 0000 		jmp layer_state_set
+ 492               	.LVL23:
+ 493               		.cfi_endproc
+ 494               	.LFE13:
+ 496               		.section	.text.layer_off,"ax",@progbits
+ 497               	.global	layer_off
+ 499               	layer_off:
+ 500               	.LVL24:
+ 501               	.LFB14:
+  86:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  87:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_off(uint8_t layer)
+  88:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 502               		.loc 1 88 1 is_stmt 1 view -0
+ 503               		.cfi_startproc
+ 504               		.loc 1 88 1 is_stmt 0 view .LVU58
+ 505 0000 0F93      		push r16
+ 506               	.LCFI24:
+ 507               		.cfi_def_cfa_offset 3
+ 508               		.cfi_offset 16, -2
+ 509 0002 1F93      		push r17
+ 510               	.LCFI25:
+ 511               		.cfi_def_cfa_offset 4
+ 512               		.cfi_offset 17, -3
+ 513 0004 CF93      		push r28
+ 514               	.LCFI26:
+ 515               		.cfi_def_cfa_offset 5
+ 516               		.cfi_offset 28, -4
+ 517 0006 DF93      		push r29
+ 518               	.LCFI27:
+ 519               		.cfi_def_cfa_offset 6
+ 520               		.cfi_offset 29, -5
+ 521 0008 00D0      		rcall .
+ 522 000a 00D0      		rcall .
+ 523               	.LCFI28:
+ 524               		.cfi_def_cfa_offset 10
+ 525 000c CDB7      		in r28,__SP_L__
+ 526 000e DEB7      		in r29,__SP_H__
+ 527               	.LCFI29:
+ 528               		.cfi_def_cfa_register 28
+ 529               	/* prologue: function */
+ 530               	/* frame size = 4 */
+ 531               	/* stack size = 8 */
+ 532               	.L__stack_usage = 8
+  89:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state & ~(1UL<<layer));
+ 533               		.loc 1 89 5 is_stmt 1 view .LVU59
+ 534               		.loc 1 89 40 is_stmt 0 view .LVU60
+ 535 0010 41E0      		ldi r20,lo8(1)
+ 536 0012 50E0      		ldi r21,0
+ 537 0014 60E0      		ldi r22,0
+ 538 0016 70E0      		ldi r23,0
+ 539 0018 00C0      		rjmp 2f
+ 540               		1:
+ 541 001a 440F      		lsl r20
+ 542 001c 551F      		rol r21
+ 543 001e 661F      		rol r22
+ 544 0020 771F      		rol r23
+ 545               		2:
+ 546 0022 8A95      		dec r24
+ 547 0024 02F4      		brpl 1b
+ 548               		.loc 1 89 35 view .LVU61
+ 549 0026 4095      		com r20
+ 550 0028 5095      		com r21
+ 551 002a 6095      		com r22
+ 552 002c 7095      		com r23
+ 553               		.loc 1 89 5 view .LVU62
+ 554 002e 8091 0000 		lds r24,layer_state
+ 555 0032 9091 0000 		lds r25,layer_state+1
+ 556 0036 A091 0000 		lds r26,layer_state+2
+ 557 003a B091 0000 		lds r27,layer_state+3
+ 558               	.LVL25:
+ 559               		.loc 1 89 5 view .LVU63
+ 560 003e 8A01      		movw r16,r20
+ 561 0040 9B01      		movw r18,r22
+ 562 0042 0823      		and r16,r24
+ 563 0044 1923      		and r17,r25
+ 564 0046 2A23      		and r18,r26
+ 565 0048 3B23      		and r19,r27
+ 566 004a 0983      		std Y+1,r16
+ 567 004c 1A83      		std Y+2,r17
+ 568 004e 2B83      		std Y+3,r18
+ 569 0050 3C83      		std Y+4,r19
+ 570 0052 C901      		movw r24,r18
+ 571 0054 B801      		movw r22,r16
+ 572               	/* epilogue start */
+  90:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 573               		.loc 1 90 1 view .LVU64
+ 574 0056 0F90      		pop __tmp_reg__
+ 575 0058 0F90      		pop __tmp_reg__
+ 576 005a 0F90      		pop __tmp_reg__
+ 577 005c 0F90      		pop __tmp_reg__
+ 578 005e DF91      		pop r29
+ 579 0060 CF91      		pop r28
+ 580 0062 1F91      		pop r17
+ 581 0064 0F91      		pop r16
+  89:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state & ~(1UL<<layer));
+ 582               		.loc 1 89 5 view .LVU65
+ 583 0066 0C94 0000 		jmp layer_state_set
+ 584               	.LVL26:
+ 585               		.cfi_endproc
+ 586               	.LFE14:
+ 588               		.section	.text.layer_invert,"ax",@progbits
+ 589               	.global	layer_invert
+ 591               	layer_invert:
+ 592               	.LVL27:
+ 593               	.LFB15:
+  91:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  92:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_invert(uint8_t layer)
+  93:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 594               		.loc 1 93 1 is_stmt 1 view -0
+ 595               		.cfi_startproc
+ 596               		.loc 1 93 1 is_stmt 0 view .LVU67
+ 597 0000 0F93      		push r16
+ 598               	.LCFI30:
+ 599               		.cfi_def_cfa_offset 3
+ 600               		.cfi_offset 16, -2
+ 601 0002 1F93      		push r17
+ 602               	.LCFI31:
+ 603               		.cfi_def_cfa_offset 4
+ 604               		.cfi_offset 17, -3
+ 605 0004 CF93      		push r28
+ 606               	.LCFI32:
+ 607               		.cfi_def_cfa_offset 5
+ 608               		.cfi_offset 28, -4
+ 609 0006 DF93      		push r29
+ 610               	.LCFI33:
+ 611               		.cfi_def_cfa_offset 6
+ 612               		.cfi_offset 29, -5
+ 613 0008 00D0      		rcall .
+ 614 000a 00D0      		rcall .
+ 615               	.LCFI34:
+ 616               		.cfi_def_cfa_offset 10
+ 617 000c CDB7      		in r28,__SP_L__
+ 618 000e DEB7      		in r29,__SP_H__
+ 619               	.LCFI35:
+ 620               		.cfi_def_cfa_register 28
+ 621               	/* prologue: function */
+ 622               	/* frame size = 4 */
+ 623               	/* stack size = 8 */
+ 624               	.L__stack_usage = 8
+  94:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state ^ (1UL<<layer));
+ 625               		.loc 1 94 5 is_stmt 1 view .LVU68
+ 626               		.loc 1 94 39 is_stmt 0 view .LVU69
+ 627 0010 41E0      		ldi r20,lo8(1)
+ 628 0012 50E0      		ldi r21,0
+ 629 0014 60E0      		ldi r22,0
+ 630 0016 70E0      		ldi r23,0
+ 631 0018 00C0      		rjmp 2f
+ 632               		1:
+ 633 001a 440F      		lsl r20
+ 634 001c 551F      		rol r21
+ 635 001e 661F      		rol r22
+ 636 0020 771F      		rol r23
+ 637               		2:
+ 638 0022 8A95      		dec r24
+ 639 0024 02F4      		brpl 1b
+ 640               		.loc 1 94 5 view .LVU70
+ 641 0026 8091 0000 		lds r24,layer_state
+ 642 002a 9091 0000 		lds r25,layer_state+1
+ 643 002e A091 0000 		lds r26,layer_state+2
+ 644 0032 B091 0000 		lds r27,layer_state+3
+ 645               	.LVL28:
+ 646               		.loc 1 94 5 view .LVU71
+ 647 0036 8A01      		movw r16,r20
+ 648 0038 9B01      		movw r18,r22
+ 649 003a 0827      		eor r16,r24
+ 650 003c 1927      		eor r17,r25
+ 651 003e 2A27      		eor r18,r26
+ 652 0040 3B27      		eor r19,r27
+ 653 0042 0983      		std Y+1,r16
+ 654 0044 1A83      		std Y+2,r17
+ 655 0046 2B83      		std Y+3,r18
+ 656 0048 3C83      		std Y+4,r19
+ 657 004a C901      		movw r24,r18
+ 658 004c B801      		movw r22,r16
+ 659               	/* epilogue start */
+  95:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 660               		.loc 1 95 1 view .LVU72
+ 661 004e 0F90      		pop __tmp_reg__
+ 662 0050 0F90      		pop __tmp_reg__
+ 663 0052 0F90      		pop __tmp_reg__
+ 664 0054 0F90      		pop __tmp_reg__
+ 665 0056 DF91      		pop r29
+ 666 0058 CF91      		pop r28
+ 667 005a 1F91      		pop r17
+ 668 005c 0F91      		pop r16
+  94:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state ^ (1UL<<layer));
+ 669               		.loc 1 94 5 view .LVU73
+ 670 005e 0C94 0000 		jmp layer_state_set
+ 671               	.LVL29:
+ 672               		.cfi_endproc
+ 673               	.LFE15:
+ 675               		.section	.text.layer_or,"ax",@progbits
+ 676               	.global	layer_or
+ 678               	layer_or:
+ 679               	.LVL30:
+ 680               	.LFB16:
+  96:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+  97:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_or(uint32_t state)
+  98:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 681               		.loc 1 98 1 is_stmt 1 view -0
+ 682               		.cfi_startproc
+ 683               		.loc 1 98 1 is_stmt 0 view .LVU75
+ 684 0000 CF93      		push r28
+ 685               	.LCFI36:
+ 686               		.cfi_def_cfa_offset 3
+ 687               		.cfi_offset 28, -2
+ 688 0002 DF93      		push r29
+ 689               	.LCFI37:
+ 690               		.cfi_def_cfa_offset 4
+ 691               		.cfi_offset 29, -3
+ 692 0004 00D0      		rcall .
+ 693 0006 00D0      		rcall .
+ 694               	.LCFI38:
+ 695               		.cfi_def_cfa_offset 8
+ 696 0008 CDB7      		in r28,__SP_L__
+ 697 000a DEB7      		in r29,__SP_H__
+ 698               	.LCFI39:
+ 699               		.cfi_def_cfa_register 28
+ 700               	/* prologue: function */
+ 701               	/* frame size = 4 */
+ 702               	/* stack size = 6 */
+ 703               	.L__stack_usage = 6
+ 704 000c 6983      		std Y+1,r22
+ 705 000e 7A83      		std Y+2,r23
+ 706 0010 8B83      		std Y+3,r24
+ 707 0012 9C83      		std Y+4,r25
+  99:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state | state);
+ 708               		.loc 1 99 5 is_stmt 1 view .LVU76
+ 709 0014 8091 0000 		lds r24,layer_state
+ 710 0018 9091 0000 		lds r25,layer_state+1
+ 711 001c A091 0000 		lds r26,layer_state+2
+ 712 0020 B091 0000 		lds r27,layer_state+3
+ 713 0024 2981      		ldd r18,Y+1
+ 714 0026 3A81      		ldd r19,Y+2
+ 715 0028 4B81      		ldd r20,Y+3
+ 716 002a 5C81      		ldd r21,Y+4
+ 717 002c 282B      		or r18,r24
+ 718 002e 392B      		or r19,r25
+ 719 0030 4A2B      		or r20,r26
+ 720 0032 5B2B      		or r21,r27
+ 721 0034 2983      		std Y+1,r18
+ 722 0036 3A83      		std Y+2,r19
+ 723 0038 4B83      		std Y+3,r20
+ 724 003a 5C83      		std Y+4,r21
+ 725 003c CA01      		movw r24,r20
+ 726 003e B901      		movw r22,r18
+ 727               	.LVL31:
+ 728               	/* epilogue start */
+ 100:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 729               		.loc 1 100 1 is_stmt 0 view .LVU77
+ 730 0040 0F90      		pop __tmp_reg__
+ 731 0042 0F90      		pop __tmp_reg__
+ 732 0044 0F90      		pop __tmp_reg__
+ 733 0046 0F90      		pop __tmp_reg__
+ 734 0048 DF91      		pop r29
+ 735 004a CF91      		pop r28
+  99:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state | state);
+ 736               		.loc 1 99 5 view .LVU78
+ 737 004c 0C94 0000 		jmp layer_state_set
+ 738               	.LVL32:
+ 739               		.cfi_endproc
+ 740               	.LFE16:
+ 742               		.section	.text.layer_and,"ax",@progbits
+ 743               	.global	layer_and
+ 745               	layer_and:
+ 746               	.LVL33:
+ 747               	.LFB17:
+ 101:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_and(uint32_t state)
+ 102:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 748               		.loc 1 102 1 is_stmt 1 view -0
+ 749               		.cfi_startproc
+ 750               		.loc 1 102 1 is_stmt 0 view .LVU80
+ 751 0000 CF93      		push r28
+ 752               	.LCFI40:
+ 753               		.cfi_def_cfa_offset 3
+ 754               		.cfi_offset 28, -2
+ 755 0002 DF93      		push r29
+ 756               	.LCFI41:
+ 757               		.cfi_def_cfa_offset 4
+ 758               		.cfi_offset 29, -3
+ 759 0004 00D0      		rcall .
+ 760 0006 00D0      		rcall .
+ 761               	.LCFI42:
+ 762               		.cfi_def_cfa_offset 8
+ 763 0008 CDB7      		in r28,__SP_L__
+ 764 000a DEB7      		in r29,__SP_H__
+ 765               	.LCFI43:
+ 766               		.cfi_def_cfa_register 28
+ 767               	/* prologue: function */
+ 768               	/* frame size = 4 */
+ 769               	/* stack size = 6 */
+ 770               	.L__stack_usage = 6
+ 771 000c 6983      		std Y+1,r22
+ 772 000e 7A83      		std Y+2,r23
+ 773 0010 8B83      		std Y+3,r24
+ 774 0012 9C83      		std Y+4,r25
+ 103:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state & state);
+ 775               		.loc 1 103 5 is_stmt 1 view .LVU81
+ 776 0014 8091 0000 		lds r24,layer_state
+ 777 0018 9091 0000 		lds r25,layer_state+1
+ 778 001c A091 0000 		lds r26,layer_state+2
+ 779 0020 B091 0000 		lds r27,layer_state+3
+ 780 0024 2981      		ldd r18,Y+1
+ 781 0026 3A81      		ldd r19,Y+2
+ 782 0028 4B81      		ldd r20,Y+3
+ 783 002a 5C81      		ldd r21,Y+4
+ 784 002c 2823      		and r18,r24
+ 785 002e 3923      		and r19,r25
+ 786 0030 4A23      		and r20,r26
+ 787 0032 5B23      		and r21,r27
+ 788 0034 2983      		std Y+1,r18
+ 789 0036 3A83      		std Y+2,r19
+ 790 0038 4B83      		std Y+3,r20
+ 791 003a 5C83      		std Y+4,r21
+ 792 003c CA01      		movw r24,r20
+ 793 003e B901      		movw r22,r18
+ 794               	.LVL34:
+ 795               	/* epilogue start */
+ 104:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 796               		.loc 1 104 1 is_stmt 0 view .LVU82
+ 797 0040 0F90      		pop __tmp_reg__
+ 798 0042 0F90      		pop __tmp_reg__
+ 799 0044 0F90      		pop __tmp_reg__
+ 800 0046 0F90      		pop __tmp_reg__
+ 801 0048 DF91      		pop r29
+ 802 004a CF91      		pop r28
+ 103:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state & state);
+ 803               		.loc 1 103 5 view .LVU83
+ 804 004c 0C94 0000 		jmp layer_state_set
+ 805               	.LVL35:
+ 806               		.cfi_endproc
+ 807               	.LFE17:
+ 809               		.section	.text.layer_xor,"ax",@progbits
+ 810               	.global	layer_xor
+ 812               	layer_xor:
+ 813               	.LVL36:
+ 814               	.LFB18:
+ 105:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_xor(uint32_t state)
+ 106:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 815               		.loc 1 106 1 is_stmt 1 view -0
+ 816               		.cfi_startproc
+ 817               		.loc 1 106 1 is_stmt 0 view .LVU85
+ 818 0000 CF93      		push r28
+ 819               	.LCFI44:
+ 820               		.cfi_def_cfa_offset 3
+ 821               		.cfi_offset 28, -2
+ 822 0002 DF93      		push r29
+ 823               	.LCFI45:
+ 824               		.cfi_def_cfa_offset 4
+ 825               		.cfi_offset 29, -3
+ 826 0004 00D0      		rcall .
+ 827 0006 00D0      		rcall .
+ 828               	.LCFI46:
+ 829               		.cfi_def_cfa_offset 8
+ 830 0008 CDB7      		in r28,__SP_L__
+ 831 000a DEB7      		in r29,__SP_H__
+ 832               	.LCFI47:
+ 833               		.cfi_def_cfa_register 28
+ 834               	/* prologue: function */
+ 835               	/* frame size = 4 */
+ 836               	/* stack size = 6 */
+ 837               	.L__stack_usage = 6
+ 838 000c 6983      		std Y+1,r22
+ 839 000e 7A83      		std Y+2,r23
+ 840 0010 8B83      		std Y+3,r24
+ 841 0012 9C83      		std Y+4,r25
+ 107:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state ^ state);
+ 842               		.loc 1 107 5 is_stmt 1 view .LVU86
+ 843 0014 8091 0000 		lds r24,layer_state
+ 844 0018 9091 0000 		lds r25,layer_state+1
+ 845 001c A091 0000 		lds r26,layer_state+2
+ 846 0020 B091 0000 		lds r27,layer_state+3
+ 847 0024 2981      		ldd r18,Y+1
+ 848 0026 3A81      		ldd r19,Y+2
+ 849 0028 4B81      		ldd r20,Y+3
+ 850 002a 5C81      		ldd r21,Y+4
+ 851 002c 2827      		eor r18,r24
+ 852 002e 3927      		eor r19,r25
+ 853 0030 4A27      		eor r20,r26
+ 854 0032 5B27      		eor r21,r27
+ 855 0034 2983      		std Y+1,r18
+ 856 0036 3A83      		std Y+2,r19
+ 857 0038 4B83      		std Y+3,r20
+ 858 003a 5C83      		std Y+4,r21
+ 859 003c CA01      		movw r24,r20
+ 860 003e B901      		movw r22,r18
+ 861               	.LVL37:
+ 862               	/* epilogue start */
+ 108:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 863               		.loc 1 108 1 is_stmt 0 view .LVU87
+ 864 0040 0F90      		pop __tmp_reg__
+ 865 0042 0F90      		pop __tmp_reg__
+ 866 0044 0F90      		pop __tmp_reg__
+ 867 0046 0F90      		pop __tmp_reg__
+ 868 0048 DF91      		pop r29
+ 869 004a CF91      		pop r28
+ 107:./tmk_keyboard/tmk_core/common/action_layer.c ****     layer_state_set(layer_state ^ state);
+ 870               		.loc 1 107 5 view .LVU88
+ 871 004c 0C94 0000 		jmp layer_state_set
+ 872               	.LVL38:
+ 873               		.cfi_endproc
+ 874               	.LFE18:
+ 876               		.section	.text.layer_debug,"ax",@progbits
+ 877               	.global	layer_debug
+ 879               	layer_debug:
+ 880               	.LFB22:
+ 881               		.cfi_startproc
+ 882               	/* prologue: function */
+ 883               	/* frame size = 0 */
+ 884               	/* stack size = 0 */
+ 885               	.L__stack_usage = 0
+ 886               	/* epilogue start */
+ 887 0000 0895      		ret
+ 888               		.cfi_endproc
+ 889               	.LFE22:
+ 891               		.section	.text.layer_switch_get_action,"ax",@progbits
+ 892               	.global	layer_switch_get_action
+ 894               	layer_switch_get_action:
+ 895               	.LVL39:
+ 896               	.LFB20:
+ 109:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+ 110:./tmk_keyboard/tmk_core/common/action_layer.c **** void layer_debug(void)
+ 111:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 112:./tmk_keyboard/tmk_core/common/action_layer.c ****     dprintf("%08lX(%u)", layer_state, biton32(layer_state));
+ 113:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 114:./tmk_keyboard/tmk_core/common/action_layer.c **** #endif
+ 115:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+ 116:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+ 117:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+ 118:./tmk_keyboard/tmk_core/common/action_layer.c **** action_t layer_switch_get_action(keypos_t key)
+ 119:./tmk_keyboard/tmk_core/common/action_layer.c **** {
+ 897               		.loc 1 119 1 is_stmt 1 view -0
+ 898               		.cfi_startproc
+ 899               		.loc 1 119 1 is_stmt 0 view .LVU90
+ 900 0000 CF92      		push r12
+ 901               	.LCFI48:
+ 902               		.cfi_def_cfa_offset 3
+ 903               		.cfi_offset 12, -2
+ 904 0002 DF92      		push r13
+ 905               	.LCFI49:
+ 906               		.cfi_def_cfa_offset 4
+ 907               		.cfi_offset 13, -3
+ 908 0004 EF92      		push r14
+ 909               	.LCFI50:
+ 910               		.cfi_def_cfa_offset 5
+ 911               		.cfi_offset 14, -4
+ 912 0006 FF92      		push r15
+ 913               	.LCFI51:
+ 914               		.cfi_def_cfa_offset 6
+ 915               		.cfi_offset 15, -5
+ 916 0008 0F93      		push r16
+ 917               	.LCFI52:
+ 918               		.cfi_def_cfa_offset 7
+ 919               		.cfi_offset 16, -6
+ 920 000a 1F93      		push r17
+ 921               	.LCFI53:
+ 922               		.cfi_def_cfa_offset 8
+ 923               		.cfi_offset 17, -7
+ 924 000c CF93      		push r28
+ 925               	.LCFI54:
+ 926               		.cfi_def_cfa_offset 9
+ 927               		.cfi_offset 28, -8
+ 928 000e DF93      		push r29
+ 929               	.LCFI55:
+ 930               		.cfi_def_cfa_offset 10
+ 931               		.cfi_offset 29, -9
+ 932               	/* prologue: function */
+ 933               	/* frame size = 0 */
+ 934               	/* stack size = 8 */
+ 935               	.L__stack_usage = 8
+ 936 0010 8C01      		movw r16,r24
+ 120:./tmk_keyboard/tmk_core/common/action_layer.c ****     action_t action = { .code = ACTION_TRANSPARENT };
+ 937               		.loc 1 120 5 is_stmt 1 view .LVU91
+ 938               	.LVL40:
+ 121:./tmk_keyboard/tmk_core/common/action_layer.c **** 
+ 122:./tmk_keyboard/tmk_core/common/action_layer.c **** #ifndef NO_ACTION_LAYER
+ 123:./tmk_keyboard/tmk_core/common/action_layer.c ****     uint32_t layers = layer_state | default_layer_state;
+ 939               		.loc 1 123 5 view .LVU92
+ 940               		.loc 1 123 14 is_stmt 0 view .LVU93
+ 941 0012 C090 0000 		lds r12,layer_state
+ 942 0016 D090 0000 		lds r13,layer_state+1
+ 943 001a E090 0000 		lds r14,layer_state+2
+ 944 001e F090 0000 		lds r15,layer_state+3
+ 945 0022 8091 0000 		lds r24,default_layer_state
+ 946 0026 9091 0000 		lds r25,default_layer_state+1
+ 947 002a A091 0000 		lds r26,default_layer_state+2
+ 948 002e B091 0000 		lds r27,default_layer_state+3
+ 949               	.LVL41:
+ 950               		.loc 1 123 14 view .LVU94
+ 951 0032 C82A      		or r12,r24
+ 952 0034 D92A      		or r13,r25
+ 953 0036 EA2A      		or r14,r26
+ 954 0038 FB2A      		or r15,r27
+ 955               	.LVL42:
+ 124:./tmk_keyboard/tmk_core/common/action_layer.c ****     /* check top layer first */
+ 125:./tmk_keyboard/tmk_core/common/action_layer.c ****     for (int8_t i = 31; i >= 0; i--) {
+ 956               		.loc 1 125 5 is_stmt 1 view .LVU95
+ 957               	.LBB2:
+ 958               		.loc 1 125 10 view .LVU96
+ 959               		.loc 1 125 27 view .LVU97
+ 960               	.LBE2:
+ 123:./tmk_keyboard/tmk_core/common/action_layer.c ****     /* check top layer first */
+ 961               		.loc 1 123 14 is_stmt 0 view .LVU98
+ 962 003a CFE1      		ldi r28,lo8(31)
+ 963 003c D0E0      		ldi r29,0
+ 964               	.LVL43:
+ 965               	.L20:
+ 966               	.LBB3:
+ 126:./tmk_keyboard/tmk_core/common/action_layer.c ****         if (layers & (1UL<<i)) {
+ 967               		.loc 1 126 9 is_stmt 1 view .LVU99
+ 968               		.loc 1 126 13 is_stmt 0 view .LVU100
+ 969 003e D701      		movw r26,r14
+ 970 0040 C601      		movw r24,r12
+ 971 0042 0C2E      		mov r0,r28
+ 972 0044 00C0      		rjmp 2f
+ 973               		1:
+ 974 0046 B695      		lsr r27
+ 975 0048 A795      		ror r26
+ 976 004a 9795      		ror r25
+ 977 004c 8795      		ror r24
+ 978               		2:
+ 979 004e 0A94      		dec r0
+ 980 0050 02F4      		brpl 1b
+ 981               		.loc 1 126 12 view .LVU101
+ 982 0052 80FF      		sbrs r24,0
+ 983 0054 00C0      		rjmp .L18
+ 127:./tmk_keyboard/tmk_core/common/action_layer.c ****             action = action_for_key(i, key);
+ 984               		.loc 1 127 13 is_stmt 1 view .LVU102
+ 985               		.loc 1 127 22 is_stmt 0 view .LVU103
+ 986 0056 B801      		movw r22,r16
+ 987 0058 8C2F      		mov r24,r28
+ 988 005a 0E94 0000 		call action_for_key
+ 989               	.LVL44:
+ 990 005e 9C01      		movw r18,r24
+ 991               	.LVL45:
+ 128:./tmk_keyboard/tmk_core/common/action_layer.c ****             if (action.code != ACTION_TRANSPARENT) {
+ 992               		.loc 1 128 13 is_stmt 1 view .LVU104
+ 993               		.loc 1 128 16 is_stmt 0 view .LVU105
+ 994 0060 0197      		sbiw r24,1
+ 995 0062 01F4      		brne .L19
+ 996               	.LVL46:
+ 997               	.L18:
+ 125:./tmk_keyboard/tmk_core/common/action_layer.c ****         if (layers & (1UL<<i)) {
+ 998               		.loc 1 125 34 is_stmt 1 view .LVU106
+ 125:./tmk_keyboard/tmk_core/common/action_layer.c ****         if (layers & (1UL<<i)) {
+ 999               		.loc 1 125 27 view .LVU107
+ 1000               	.LVL47:
+ 1001 0064 2197      		sbiw r28,1
+ 1002 0066 00F4      		brcc .L20
+ 125:./tmk_keyboard/tmk_core/common/action_layer.c ****         if (layers & (1UL<<i)) {
+ 1003               		.loc 1 125 27 is_stmt 0 view .LVU108
+ 1004               	.LBE3:
+ 129:./tmk_keyboard/tmk_core/common/action_layer.c ****                 return action;
+ 130:./tmk_keyboard/tmk_core/common/action_layer.c ****             }
+ 131:./tmk_keyboard/tmk_core/common/action_layer.c ****         }
+ 132:./tmk_keyboard/tmk_core/common/action_layer.c ****     }
+ 133:./tmk_keyboard/tmk_core/common/action_layer.c ****     /* fall back to layer 0 */
+ 134:./tmk_keyboard/tmk_core/common/action_layer.c ****     action = action_for_key(0, key);
+ 1005               		.loc 1 134 5 is_stmt 1 view .LVU109
+ 1006               		.loc 1 134 14 is_stmt 0 view .LVU110
+ 1007 0068 B801      		movw r22,r16
+ 1008 006a 80E0      		ldi r24,0
+ 1009 006c 0E94 0000 		call action_for_key
+ 1010               	.LVL48:
+ 1011 0070 9C01      		movw r18,r24
+ 1012               	.LVL49:
+ 135:./tmk_keyboard/tmk_core/common/action_layer.c ****     return action;
+ 1013               		.loc 1 135 5 is_stmt 1 view .LVU111
+ 1014               	.L19:
+ 136:./tmk_keyboard/tmk_core/common/action_layer.c **** #else
+ 137:./tmk_keyboard/tmk_core/common/action_layer.c ****     action = action_for_key(biton32(default_layer_state), key);
+ 138:./tmk_keyboard/tmk_core/common/action_layer.c ****     return action;
+ 139:./tmk_keyboard/tmk_core/common/action_layer.c **** #endif
+ 140:./tmk_keyboard/tmk_core/common/action_layer.c **** }
+ 1015               		.loc 1 140 1 is_stmt 0 view .LVU112
+ 1016 0072 C901      		movw r24,r18
+ 1017               	/* epilogue start */
+ 1018 0074 DF91      		pop r29
+ 1019 0076 CF91      		pop r28
+ 1020 0078 1F91      		pop r17
+ 1021 007a 0F91      		pop r16
+ 1022 007c FF90      		pop r15
+ 1023 007e EF90      		pop r14
+ 1024 0080 DF90      		pop r13
+ 1025 0082 CF90      		pop r12
+ 1026               	.LVL50:
+ 1027               		.loc 1 140 1 view .LVU113
+ 1028 0084 0895      		ret
+ 1029               		.cfi_endproc
+ 1030               	.LFE20:
+ 1032               	.global	layer_state
+ 1033               		.section	.bss.layer_state,"aw",@nobits
+ 1036               	layer_state:
+ 1037 0000 0000 0000 		.zero	4
+ 1038               	.global	default_layer_state
+ 1039               		.section	.bss.default_layer_state,"aw",@nobits
+ 1042               	default_layer_state:
+ 1043 0000 0000 0000 		.zero	4
+ 1044               		.text
+ 1045               	.Letext0:
+ 1046               		.file 2 "/usr/avr/include/stdint.h"
+ 1047               		.file 3 "./tmk_keyboard/tmk_core/common/keyboard.h"
+ 1048               		.file 4 "./tmk_keyboard/tmk_core/common/action_code.h"
+ 1049               		.file 5 "./tmk_keyboard/tmk_core/common/action_layer.h"
+ 1050               		.file 6 "./tmk_keyboard/tmk_core/common/hook.h"
+ 1051               		.file 7 "./tmk_keyboard/tmk_core/common/action.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 action_layer.c
+     /tmp/cczMsUgM.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cczMsUgM.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cczMsUgM.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cczMsUgM.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/cczMsUgM.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cczMsUgM.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cczMsUgM.s:13     .text.default_layer_state_set:0000000000000000 default_layer_state_set
+     /tmp/cczMsUgM.s:1042   .bss.default_layer_state:0000000000000000 default_layer_state
+     /tmp/cczMsUgM.s:45     .text.layer_state_set:0000000000000000 layer_state_set
+     /tmp/cczMsUgM.s:1036   .bss.layer_state:0000000000000000 layer_state
+     /tmp/cczMsUgM.s:77     .text.default_layer_debug:0000000000000000 default_layer_debug
+     /tmp/cczMsUgM.s:95     .text.default_layer_set:0000000000000000 default_layer_set
+     /tmp/cczMsUgM.s:114    .text.default_layer_or:0000000000000000 default_layer_or
+     /tmp/cczMsUgM.s:181    .text.default_layer_and:0000000000000000 default_layer_and
+     /tmp/cczMsUgM.s:248    .text.default_layer_xor:0000000000000000 default_layer_xor
+     /tmp/cczMsUgM.s:315    .text.layer_clear:0000000000000000 layer_clear
+     /tmp/cczMsUgM.s:335    .text.layer_move:0000000000000000 layer_move
+     /tmp/cczMsUgM.s:412    .text.layer_on:0000000000000000 layer_on
+     /tmp/cczMsUgM.s:499    .text.layer_off:0000000000000000 layer_off
+     /tmp/cczMsUgM.s:591    .text.layer_invert:0000000000000000 layer_invert
+     /tmp/cczMsUgM.s:678    .text.layer_or:0000000000000000 layer_or
+     /tmp/cczMsUgM.s:745    .text.layer_and:0000000000000000 layer_and
+     /tmp/cczMsUgM.s:812    .text.layer_xor:0000000000000000 layer_xor
+     /tmp/cczMsUgM.s:879    .text.layer_debug:0000000000000000 layer_debug
+     /tmp/cczMsUgM.s:894    .text.layer_switch_get_action:0000000000000000 layer_switch_get_action
+
+UNDEFINED SYMBOLS
+hook_default_layer_change
+clear_keyboard_but_mods
+hook_layer_change
+action_for_key
+__do_clear_bss

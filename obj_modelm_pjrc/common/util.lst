@@ -1,0 +1,713 @@
+   1               		.file	"util.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               		.section	.text.bitpop,"ax",@progbits
+  12               	.global	bitpop
+  14               	bitpop:
+  15               	.LVL0:
+  16               	.LFB0:
+  17               		.file 1 "./tmk_keyboard/tmk_core/common/util.c"
+   1:./tmk_keyboard/tmk_core/common/util.c **** /*
+   2:./tmk_keyboard/tmk_core/common/util.c **** Copyright 2011 Jun Wako <wakojun@gmail.com>
+   3:./tmk_keyboard/tmk_core/common/util.c **** 
+   4:./tmk_keyboard/tmk_core/common/util.c **** This program is free software: you can redistribute it and/or modify
+   5:./tmk_keyboard/tmk_core/common/util.c **** it under the terms of the GNU General Public License as published by
+   6:./tmk_keyboard/tmk_core/common/util.c **** the Free Software Foundation, either version 2 of the License, or
+   7:./tmk_keyboard/tmk_core/common/util.c **** (at your option) any later version.
+   8:./tmk_keyboard/tmk_core/common/util.c **** 
+   9:./tmk_keyboard/tmk_core/common/util.c **** This program is distributed in the hope that it will be useful,
+  10:./tmk_keyboard/tmk_core/common/util.c **** but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:./tmk_keyboard/tmk_core/common/util.c **** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  12:./tmk_keyboard/tmk_core/common/util.c **** GNU General Public License for more details.
+  13:./tmk_keyboard/tmk_core/common/util.c **** 
+  14:./tmk_keyboard/tmk_core/common/util.c **** You should have received a copy of the GNU General Public License
+  15:./tmk_keyboard/tmk_core/common/util.c **** along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  16:./tmk_keyboard/tmk_core/common/util.c **** */
+  17:./tmk_keyboard/tmk_core/common/util.c **** 
+  18:./tmk_keyboard/tmk_core/common/util.c **** #include "util.h"
+  19:./tmk_keyboard/tmk_core/common/util.c **** 
+  20:./tmk_keyboard/tmk_core/common/util.c **** // bit population - return number of on-bit
+  21:./tmk_keyboard/tmk_core/common/util.c **** uint8_t bitpop(uint8_t bits)
+  22:./tmk_keyboard/tmk_core/common/util.c **** {
+  18               		.loc 1 22 1 view -0
+  19               		.cfi_startproc
+  20               	/* prologue: function */
+  21               	/* frame size = 0 */
+  22               	/* stack size = 0 */
+  23               	.L__stack_usage = 0
+  23:./tmk_keyboard/tmk_core/common/util.c ****     uint8_t c;
+  24               		.loc 1 23 5 view .LVU1
+  24:./tmk_keyboard/tmk_core/common/util.c ****     for (c = 0; bits; c++)
+  25               		.loc 1 24 5 view .LVU2
+  26               		.loc 1 24 17 view .LVU3
+  27 0000 90E0      		ldi r25,0
+  28 0002 0E94 0000 		call __popcounthi2
+  25:./tmk_keyboard/tmk_core/common/util.c ****         bits &= bits - 1;
+  26:./tmk_keyboard/tmk_core/common/util.c ****     return c;
+  29               		.loc 1 26 5 view .LVU4
+  30               	/* epilogue start */
+  27:./tmk_keyboard/tmk_core/common/util.c **** /*
+  28:./tmk_keyboard/tmk_core/common/util.c ****     const uint8_t bit_count[] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+  29:./tmk_keyboard/tmk_core/common/util.c ****     return bit_count[bits>>4] + bit_count[bits&0x0F]
+  30:./tmk_keyboard/tmk_core/common/util.c **** */
+  31:./tmk_keyboard/tmk_core/common/util.c **** }
+  31               		.loc 1 31 1 is_stmt 0 view .LVU5
+  32 0006 0895      		ret
+  33               		.cfi_endproc
+  34               	.LFE0:
+  36               		.section	.text.bitpop16,"ax",@progbits
+  37               	.global	bitpop16
+  39               	bitpop16:
+  40               	.LVL1:
+  41               	.LFB1:
+  32:./tmk_keyboard/tmk_core/common/util.c **** 
+  33:./tmk_keyboard/tmk_core/common/util.c **** uint8_t bitpop16(uint16_t bits)
+  34:./tmk_keyboard/tmk_core/common/util.c **** {
+  42               		.loc 1 34 1 is_stmt 1 view -0
+  43               		.cfi_startproc
+  44               	/* prologue: function */
+  45               	/* frame size = 0 */
+  46               	/* stack size = 0 */
+  47               	.L__stack_usage = 0
+  35:./tmk_keyboard/tmk_core/common/util.c ****     uint8_t c;
+  48               		.loc 1 35 5 view .LVU7
+  36:./tmk_keyboard/tmk_core/common/util.c ****     for (c = 0; bits; c++)
+  49               		.loc 1 36 5 view .LVU8
+  50               		.loc 1 36 17 view .LVU9
+  51 0000 0E94 0000 		call __popcounthi2
+  37:./tmk_keyboard/tmk_core/common/util.c ****         bits &= bits - 1;
+  38:./tmk_keyboard/tmk_core/common/util.c ****     return c;
+  52               		.loc 1 38 5 view .LVU10
+  53               	/* epilogue start */
+  39:./tmk_keyboard/tmk_core/common/util.c **** }
+  54               		.loc 1 39 1 is_stmt 0 view .LVU11
+  55 0004 0895      		ret
+  56               		.cfi_endproc
+  57               	.LFE1:
+  59               		.section	.text.bitpop32,"ax",@progbits
+  60               	.global	bitpop32
+  62               	bitpop32:
+  63               	.LVL2:
+  64               	.LFB2:
+  40:./tmk_keyboard/tmk_core/common/util.c **** 
+  41:./tmk_keyboard/tmk_core/common/util.c **** uint8_t bitpop32(uint32_t bits)
+  42:./tmk_keyboard/tmk_core/common/util.c **** {
+  65               		.loc 1 42 1 is_stmt 1 view -0
+  66               		.cfi_startproc
+  67               	/* prologue: function */
+  68               	/* frame size = 0 */
+  69               	/* stack size = 0 */
+  70               	.L__stack_usage = 0
+  43:./tmk_keyboard/tmk_core/common/util.c ****     uint8_t c;
+  71               		.loc 1 43 5 view .LVU13
+  44:./tmk_keyboard/tmk_core/common/util.c ****     for (c = 0; bits; c++)
+  72               		.loc 1 44 5 view .LVU14
+  73               		.loc 1 44 17 view .LVU15
+  74 0000 0E94 0000 		call __popcountsi2
+  45:./tmk_keyboard/tmk_core/common/util.c ****         bits &= bits - 1;
+  46:./tmk_keyboard/tmk_core/common/util.c ****     return c;
+  75               		.loc 1 46 5 view .LVU16
+  76               	/* epilogue start */
+  47:./tmk_keyboard/tmk_core/common/util.c **** }
+  77               		.loc 1 47 1 is_stmt 0 view .LVU17
+  78 0004 0895      		ret
+  79               		.cfi_endproc
+  80               	.LFE2:
+  82               		.section	.text.biton,"ax",@progbits
+  83               	.global	biton
+  85               	biton:
+  86               	.LVL3:
+  87               	.LFB3:
+  48:./tmk_keyboard/tmk_core/common/util.c **** 
+  49:./tmk_keyboard/tmk_core/common/util.c **** // most significant on-bit - return highest location of on-bit
+  50:./tmk_keyboard/tmk_core/common/util.c **** // NOTE: return 0 when bit0 is on or all bits are off
+  51:./tmk_keyboard/tmk_core/common/util.c **** uint8_t biton(uint8_t bits)
+  52:./tmk_keyboard/tmk_core/common/util.c **** {
+  88               		.loc 1 52 1 is_stmt 1 view -0
+  89               		.cfi_startproc
+  90               	/* prologue: function */
+  91               	/* frame size = 0 */
+  92               	/* stack size = 0 */
+  93               	.L__stack_usage = 0
+  94               		.loc 1 52 1 is_stmt 0 view .LVU19
+  95 0000 982F      		mov r25,r24
+  53:./tmk_keyboard/tmk_core/common/util.c ****     uint8_t n = 0;
+  96               		.loc 1 53 5 is_stmt 1 view .LVU20
+  97               	.LVL4:
+  54:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 4) { bits >>= 4; n += 4;}
+  98               		.loc 1 54 5 view .LVU21
+  99               		.loc 1 54 9 is_stmt 0 view .LVU22
+ 100 0002 8295      		swap r24
+ 101               	.LVL5:
+ 102               		.loc 1 54 9 view .LVU23
+ 103 0004 8F70      		andi r24,lo8(15)
+ 104               		.loc 1 54 8 view .LVU24
+ 105 0006 01F0      		breq .L5
+ 106 0008 982F      		mov r25,r24
+ 107               	.LVL6:
+ 108               		.loc 1 54 36 view .LVU25
+ 109 000a 84E0      		ldi r24,lo8(4)
+ 110               	.L5:
+ 111               	.LVL7:
+  55:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 2) { bits >>= 2; n += 2;}
+ 112               		.loc 1 55 5 is_stmt 1 view .LVU26
+ 113               		.loc 1 55 9 is_stmt 0 view .LVU27
+ 114 000c 292F      		mov r18,r25
+ 115 000e 2695      		lsr r18
+ 116 0010 2695      		lsr r18
+ 117               		.loc 1 55 8 view .LVU28
+ 118 0012 01F0      		breq .L6
+ 119               		.loc 1 55 22 is_stmt 1 discriminator 1 view .LVU29
+ 120               	.LVL8:
+ 121               		.loc 1 55 34 discriminator 1 view .LVU30
+ 122               		.loc 1 55 36 is_stmt 0 discriminator 1 view .LVU31
+ 123 0014 8E5F      		subi r24,lo8(-(2))
+ 124               	.LVL9:
+ 125               		.loc 1 55 36 discriminator 1 view .LVU32
+ 126 0016 922F      		mov r25,r18
+ 127               	.LVL10:
+ 128               	.L6:
+  56:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 1) { bits >>= 1; n += 1;}
+ 129               		.loc 1 56 5 is_stmt 1 view .LVU33
+ 130               		.loc 1 56 9 is_stmt 0 view .LVU34
+ 131 0018 9695      		lsr r25
+ 132               	.LVL11:
+ 133               		.loc 1 56 8 view .LVU35
+ 134 001a 01F0      		breq .L4
+ 135               		.loc 1 56 22 is_stmt 1 discriminator 1 view .LVU36
+ 136               	.LVL12:
+ 137               		.loc 1 56 34 discriminator 1 view .LVU37
+ 138               		.loc 1 56 36 is_stmt 0 discriminator 1 view .LVU38
+ 139 001c 8F5F      		subi r24,lo8(-(1))
+ 140               	.LVL13:
+  57:./tmk_keyboard/tmk_core/common/util.c ****     return n;
+ 141               		.loc 1 57 5 is_stmt 1 discriminator 1 view .LVU39
+ 142               	.L4:
+ 143               	/* epilogue start */
+  58:./tmk_keyboard/tmk_core/common/util.c **** }
+ 144               		.loc 1 58 1 is_stmt 0 view .LVU40
+ 145 001e 0895      		ret
+ 146               		.cfi_endproc
+ 147               	.LFE3:
+ 149               		.section	.text.biton16,"ax",@progbits
+ 150               	.global	biton16
+ 152               	biton16:
+ 153               	.LVL14:
+ 154               	.LFB4:
+  59:./tmk_keyboard/tmk_core/common/util.c **** 
+  60:./tmk_keyboard/tmk_core/common/util.c **** uint8_t biton16(uint16_t bits)
+  61:./tmk_keyboard/tmk_core/common/util.c **** {
+ 155               		.loc 1 61 1 is_stmt 1 view -0
+ 156               		.cfi_startproc
+ 157               	/* prologue: function */
+ 158               	/* frame size = 0 */
+ 159               	/* stack size = 0 */
+ 160               	.L__stack_usage = 0
+ 161               		.loc 1 61 1 is_stmt 0 view .LVU42
+ 162 0000 9C01      		movw r18,r24
+  62:./tmk_keyboard/tmk_core/common/util.c ****     uint8_t n = 0;
+ 163               		.loc 1 62 5 is_stmt 1 view .LVU43
+ 164               	.LVL15:
+  63:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 8) { bits >>= 8; n += 8;}
+ 165               		.loc 1 63 5 view .LVU44
+ 166               		.loc 1 63 14 is_stmt 0 view .LVU45
+ 167 0002 892F      		mov r24,r25
+ 168 0004 9927      		clr r25
+ 169               	.LVL16:
+ 170               		.loc 1 63 8 view .LVU46
+ 171 0006 0097      		sbiw r24,0
+ 172 0008 01F0      		breq .L22
+ 173 000a 9C01      		movw r18,r24
+ 174               	.LVL17:
+ 175               		.loc 1 63 36 view .LVU47
+ 176 000c 88E0      		ldi r24,lo8(8)
+ 177               	.L18:
+ 178               	.LVL18:
+  64:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 4) { bits >>= 4; n += 4;}
+ 179               		.loc 1 64 5 is_stmt 1 view .LVU48
+ 180               		.loc 1 64 14 is_stmt 0 view .LVU49
+ 181 000e A901      		movw r20,r18
+ 182 0010 74E0      		ldi r23,4
+ 183               		1:
+ 184 0012 5695      		lsr r21
+ 185 0014 4795      		ror r20
+ 186 0016 7A95      		dec r23
+ 187 0018 01F4      		brne 1b
+ 188               		.loc 1 64 8 view .LVU50
+ 189 001a 4115      		cp r20,__zero_reg__
+ 190 001c 5105      		cpc r21,__zero_reg__
+ 191 001e 01F0      		breq .L19
+ 192               		.loc 1 64 22 is_stmt 1 discriminator 1 view .LVU51
+ 193               	.LVL19:
+ 194               		.loc 1 64 34 discriminator 1 view .LVU52
+ 195               		.loc 1 64 36 is_stmt 0 discriminator 1 view .LVU53
+ 196 0020 8C5F      		subi r24,lo8(-(4))
+ 197               	.LVL20:
+ 198               		.loc 1 64 36 discriminator 1 view .LVU54
+ 199 0022 9A01      		movw r18,r20
+ 200               	.LVL21:
+ 201               	.L19:
+  65:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 2) { bits >>= 2; n += 2;}
+ 202               		.loc 1 65 5 is_stmt 1 view .LVU55
+ 203               		.loc 1 65 14 is_stmt 0 view .LVU56
+ 204 0024 A901      		movw r20,r18
+ 205 0026 5695      		lsr r21
+ 206 0028 4795      		ror r20
+ 207 002a 5695      		lsr r21
+ 208 002c 4795      		ror r20
+ 209               		.loc 1 65 8 view .LVU57
+ 210 002e 4115      		cp r20,__zero_reg__
+ 211 0030 5105      		cpc r21,__zero_reg__
+ 212 0032 01F0      		breq .L20
+ 213               		.loc 1 65 22 is_stmt 1 discriminator 1 view .LVU58
+ 214               	.LVL22:
+ 215               		.loc 1 65 34 discriminator 1 view .LVU59
+ 216               		.loc 1 65 36 is_stmt 0 discriminator 1 view .LVU60
+ 217 0034 8E5F      		subi r24,lo8(-(2))
+ 218               	.LVL23:
+ 219               		.loc 1 65 36 discriminator 1 view .LVU61
+ 220 0036 9A01      		movw r18,r20
+ 221               	.LVL24:
+ 222               	.L20:
+  66:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 1) { bits >>= 1; n += 1;}
+ 223               		.loc 1 66 5 is_stmt 1 view .LVU62
+ 224               		.loc 1 66 14 is_stmt 0 view .LVU63
+ 225 0038 3695      		lsr r19
+ 226 003a 2795      		ror r18
+ 227               	.LVL25:
+ 228               		.loc 1 66 8 view .LVU64
+ 229 003c 232B      		or r18,r19
+ 230 003e 01F0      		breq .L17
+ 231               		.loc 1 66 22 is_stmt 1 discriminator 1 view .LVU65
+ 232               	.LVL26:
+ 233               		.loc 1 66 34 discriminator 1 view .LVU66
+ 234               		.loc 1 66 36 is_stmt 0 discriminator 1 view .LVU67
+ 235 0040 8F5F      		subi r24,lo8(-(1))
+ 236               	.LVL27:
+  67:./tmk_keyboard/tmk_core/common/util.c ****     return n;
+ 237               		.loc 1 67 5 is_stmt 1 discriminator 1 view .LVU68
+ 238               	.L17:
+ 239               	/* epilogue start */
+  68:./tmk_keyboard/tmk_core/common/util.c **** }
+ 240               		.loc 1 68 1 is_stmt 0 view .LVU69
+ 241 0042 0895      		ret
+ 242               	.LVL28:
+ 243               	.L22:
+  62:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 8) { bits >>= 8; n += 8;}
+ 244               		.loc 1 62 13 view .LVU70
+ 245 0044 80E0      		ldi r24,0
+ 246 0046 00C0      		rjmp .L18
+ 247               		.cfi_endproc
+ 248               	.LFE4:
+ 250               		.section	.text.biton32,"ax",@progbits
+ 251               	.global	biton32
+ 253               	biton32:
+ 254               	.LVL29:
+ 255               	.LFB5:
+  69:./tmk_keyboard/tmk_core/common/util.c **** 
+  70:./tmk_keyboard/tmk_core/common/util.c **** uint8_t biton32(uint32_t bits)
+  71:./tmk_keyboard/tmk_core/common/util.c **** {
+ 256               		.loc 1 71 1 is_stmt 1 view -0
+ 257               		.cfi_startproc
+ 258               		.loc 1 71 1 is_stmt 0 view .LVU72
+ 259 0000 0F93      		push r16
+ 260               	.LCFI0:
+ 261               		.cfi_def_cfa_offset 3
+ 262               		.cfi_offset 16, -2
+ 263 0002 1F93      		push r17
+ 264               	.LCFI1:
+ 265               		.cfi_def_cfa_offset 4
+ 266               		.cfi_offset 17, -3
+ 267               	/* prologue: function */
+ 268               	/* frame size = 0 */
+ 269               	/* stack size = 2 */
+ 270               	.L__stack_usage = 2
+ 271 0004 462F      		mov r20,r22
+ 272 0006 572F      		mov r21,r23
+ 273 0008 BC01      		movw r22,r24
+ 274               	.LVL30:
+  72:./tmk_keyboard/tmk_core/common/util.c ****     uint8_t n = 0;
+ 275               		.loc 1 72 5 is_stmt 1 view .LVU73
+  73:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >>16) { bits >>=16; n +=16;}
+ 276               		.loc 1 73 5 view .LVU74
+ 277               		.loc 1 73 14 is_stmt 0 view .LVU75
+ 278 000a CB01      		movw r24,r22
+ 279 000c AA27      		clr r26
+ 280 000e BB27      		clr r27
+ 281               		.loc 1 73 8 view .LVU76
+ 282 0010 0097      		sbiw r24,0
+ 283 0012 A105      		cpc r26,__zero_reg__
+ 284 0014 B105      		cpc r27,__zero_reg__
+ 285 0016 01F0      		breq .L38
+ 286 0018 AC01      		movw r20,r24
+ 287 001a BD01      		movw r22,r26
+ 288               		.loc 1 73 36 view .LVU77
+ 289 001c 80E1      		ldi r24,lo8(16)
+ 290               	.L33:
+ 291               	.LVL31:
+  74:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 8) { bits >>= 8; n += 8;}
+ 292               		.loc 1 74 5 is_stmt 1 view .LVU78
+ 293               		.loc 1 74 14 is_stmt 0 view .LVU79
+ 294 001e 052F      		mov r16,r21
+ 295 0020 162F      		mov r17,r22
+ 296 0022 272F      		mov r18,r23
+ 297 0024 3327      		clr r19
+ 298               		.loc 1 74 8 view .LVU80
+ 299 0026 0115      		cp r16,__zero_reg__
+ 300 0028 1105      		cpc r17,__zero_reg__
+ 301 002a 2105      		cpc r18,__zero_reg__
+ 302 002c 3105      		cpc r19,__zero_reg__
+ 303 002e 01F0      		breq .L34
+ 304               		.loc 1 74 22 is_stmt 1 discriminator 1 view .LVU81
+ 305               	.LVL32:
+ 306               		.loc 1 74 34 discriminator 1 view .LVU82
+ 307               		.loc 1 74 36 is_stmt 0 discriminator 1 view .LVU83
+ 308 0030 885F      		subi r24,lo8(-(8))
+ 309               	.LVL33:
+ 310               		.loc 1 74 36 discriminator 1 view .LVU84
+ 311 0032 B901      		movw r22,r18
+ 312 0034 A801      		movw r20,r16
+ 313               	.LVL34:
+ 314               	.L34:
+  75:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 4) { bits >>= 4; n += 4;}
+ 315               		.loc 1 75 5 is_stmt 1 view .LVU85
+ 316               		.loc 1 75 14 is_stmt 0 view .LVU86
+ 317 0036 8A01      		movw r16,r20
+ 318 0038 9B01      		movw r18,r22
+ 319 003a F4E0      		ldi r31,4
+ 320               		1:
+ 321 003c 3695      		lsr r19
+ 322 003e 2795      		ror r18
+ 323 0040 1795      		ror r17
+ 324 0042 0795      		ror r16
+ 325 0044 FA95      		dec r31
+ 326 0046 01F4      		brne 1b
+ 327               		.loc 1 75 8 view .LVU87
+ 328 0048 0115      		cp r16,__zero_reg__
+ 329 004a 1105      		cpc r17,__zero_reg__
+ 330 004c 2105      		cpc r18,__zero_reg__
+ 331 004e 3105      		cpc r19,__zero_reg__
+ 332 0050 01F0      		breq .L35
+ 333               		.loc 1 75 22 is_stmt 1 discriminator 1 view .LVU88
+ 334               	.LVL35:
+ 335               		.loc 1 75 34 discriminator 1 view .LVU89
+ 336               		.loc 1 75 36 is_stmt 0 discriminator 1 view .LVU90
+ 337 0052 8C5F      		subi r24,lo8(-(4))
+ 338               	.LVL36:
+ 339               		.loc 1 75 36 discriminator 1 view .LVU91
+ 340 0054 B901      		movw r22,r18
+ 341 0056 A801      		movw r20,r16
+ 342               	.LVL37:
+ 343               	.L35:
+  76:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 2) { bits >>= 2; n += 2;}
+ 344               		.loc 1 76 5 is_stmt 1 view .LVU92
+ 345               		.loc 1 76 14 is_stmt 0 view .LVU93
+ 346 0058 8A01      		movw r16,r20
+ 347 005a 9B01      		movw r18,r22
+ 348 005c E2E0      		ldi r30,2
+ 349               		1:
+ 350 005e 3695      		lsr r19
+ 351 0060 2795      		ror r18
+ 352 0062 1795      		ror r17
+ 353 0064 0795      		ror r16
+ 354 0066 EA95      		dec r30
+ 355 0068 01F4      		brne 1b
+ 356               		.loc 1 76 8 view .LVU94
+ 357 006a 0115      		cp r16,__zero_reg__
+ 358 006c 1105      		cpc r17,__zero_reg__
+ 359 006e 2105      		cpc r18,__zero_reg__
+ 360 0070 3105      		cpc r19,__zero_reg__
+ 361 0072 01F0      		breq .L36
+ 362               		.loc 1 76 22 is_stmt 1 discriminator 1 view .LVU95
+ 363               	.LVL38:
+ 364               		.loc 1 76 34 discriminator 1 view .LVU96
+ 365               		.loc 1 76 36 is_stmt 0 discriminator 1 view .LVU97
+ 366 0074 8E5F      		subi r24,lo8(-(2))
+ 367               	.LVL39:
+ 368               		.loc 1 76 36 discriminator 1 view .LVU98
+ 369 0076 B901      		movw r22,r18
+ 370 0078 A801      		movw r20,r16
+ 371               	.LVL40:
+ 372               	.L36:
+  77:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >> 1) { bits >>= 1; n += 1;}
+ 373               		.loc 1 77 5 is_stmt 1 view .LVU99
+ 374               		.loc 1 77 14 is_stmt 0 view .LVU100
+ 375 007a 7695      		lsr r23
+ 376 007c 6795      		ror r22
+ 377 007e 5795      		ror r21
+ 378 0080 4795      		ror r20
+ 379               	.LVL41:
+ 380               		.loc 1 77 8 view .LVU101
+ 381 0082 452B      		or r20,r21
+ 382 0084 462B      		or r20,r22
+ 383 0086 472B      		or r20,r23
+ 384 0088 01F0      		breq .L32
+ 385               		.loc 1 77 22 is_stmt 1 discriminator 1 view .LVU102
+ 386               	.LVL42:
+ 387               		.loc 1 77 34 discriminator 1 view .LVU103
+ 388               		.loc 1 77 36 is_stmt 0 discriminator 1 view .LVU104
+ 389 008a 8F5F      		subi r24,lo8(-(1))
+ 390               	.LVL43:
+  78:./tmk_keyboard/tmk_core/common/util.c ****     return n;
+ 391               		.loc 1 78 5 is_stmt 1 discriminator 1 view .LVU105
+ 392               	.L32:
+ 393               	/* epilogue start */
+  79:./tmk_keyboard/tmk_core/common/util.c **** }
+ 394               		.loc 1 79 1 is_stmt 0 view .LVU106
+ 395 008c 1F91      		pop r17
+ 396 008e 0F91      		pop r16
+ 397 0090 0895      		ret
+ 398               	.LVL44:
+ 399               	.L38:
+  72:./tmk_keyboard/tmk_core/common/util.c ****     if (bits >>16) { bits >>=16; n +=16;}
+ 400               		.loc 1 72 13 view .LVU107
+ 401 0092 80E0      		ldi r24,0
+ 402 0094 00C0      		rjmp .L33
+ 403               		.cfi_endproc
+ 404               	.LFE5:
+ 406               		.section	.text.bitrev,"ax",@progbits
+ 407               	.global	bitrev
+ 409               	bitrev:
+ 410               	.LVL45:
+ 411               	.LFB6:
+  80:./tmk_keyboard/tmk_core/common/util.c **** 
+  81:./tmk_keyboard/tmk_core/common/util.c **** 
+  82:./tmk_keyboard/tmk_core/common/util.c **** 
+  83:./tmk_keyboard/tmk_core/common/util.c **** uint8_t bitrev(uint8_t bits)
+  84:./tmk_keyboard/tmk_core/common/util.c **** {
+ 412               		.loc 1 84 1 is_stmt 1 view -0
+ 413               		.cfi_startproc
+ 414               	/* prologue: function */
+ 415               	/* frame size = 0 */
+ 416               	/* stack size = 0 */
+ 417               	.L__stack_usage = 0
+  85:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0x0f)<<4 | (bits & 0xf0)>>4;
+ 418               		.loc 1 85 5 view .LVU109
+  86:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b00110011)<<2 | (bits & 0b11001100)>>2;
+ 419               		.loc 1 86 5 view .LVU110
+  85:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0x0f)<<4 | (bits & 0xf0)>>4;
+ 420               		.loc 1 85 10 is_stmt 0 view .LVU111
+ 421 0000 8295      		swap r24
+ 422               	.LVL46:
+  87:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b01010101)<<1 | (bits & 0b10101010)>>1;
+ 423               		.loc 1 87 5 is_stmt 1 view .LVU112
+  86:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b00110011)<<2 | (bits & 0b11001100)>>2;
+ 424               		.loc 1 86 31 is_stmt 0 view .LVU113
+ 425 0002 94E0      		ldi r25,lo8(4)
+ 426 0004 899F      		mul r24,r25
+ 427 0006 9001      		movw r18,r0
+ 428 0008 1124      		clr __zero_reg__
+ 429 000a 2C7C      		andi r18,lo8(-52)
+  86:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b00110011)<<2 | (bits & 0b11001100)>>2;
+ 430               		.loc 1 86 56 view .LVU114
+ 431 000c 8695      		lsr r24
+ 432 000e 8695      		lsr r24
+ 433               	.LVL47:
+  86:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b00110011)<<2 | (bits & 0b11001100)>>2;
+ 434               		.loc 1 86 56 view .LVU115
+ 435 0010 8373      		andi r24,lo8(51)
+  86:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b00110011)<<2 | (bits & 0b11001100)>>2;
+ 436               		.loc 1 86 35 view .LVU116
+ 437 0012 282B      		or r18,r24
+ 438               		.loc 1 87 31 view .LVU117
+ 439 0014 30E0      		ldi r19,0
+ 440               	.LVL48:
+  88:./tmk_keyboard/tmk_core/common/util.c ****     return bits;
+ 441               		.loc 1 88 5 is_stmt 1 view .LVU118
+  87:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b01010101)<<1 | (bits & 0b10101010)>>1;
+ 442               		.loc 1 87 31 is_stmt 0 view .LVU119
+ 443 0016 C901      		movw r24,r18
+ 444 0018 880F      		lsl r24
+ 445 001a 991F      		rol r25
+ 446 001c 8A7A      		andi r24,lo8(-86)
+  87:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b01010101)<<1 | (bits & 0b10101010)>>1;
+ 447               		.loc 1 87 56 view .LVU120
+ 448 001e 3595      		asr r19
+ 449 0020 2795      		ror r18
+ 450               	.LVL49:
+  87:./tmk_keyboard/tmk_core/common/util.c ****     bits = (bits & 0b01010101)<<1 | (bits & 0b10101010)>>1;
+ 451               		.loc 1 87 56 view .LVU121
+ 452 0022 2575      		andi r18,lo8(85)
+  89:./tmk_keyboard/tmk_core/common/util.c **** }
+ 453               		.loc 1 89 1 view .LVU122
+ 454 0024 822B      		or r24,r18
+ 455               	/* epilogue start */
+ 456 0026 0895      		ret
+ 457               		.cfi_endproc
+ 458               	.LFE6:
+ 460               		.section	.text.bitrev16,"ax",@progbits
+ 461               	.global	bitrev16
+ 463               	bitrev16:
+ 464               	.LVL50:
+ 465               	.LFB7:
+  90:./tmk_keyboard/tmk_core/common/util.c **** 
+  91:./tmk_keyboard/tmk_core/common/util.c **** uint16_t bitrev16(uint16_t bits)
+  92:./tmk_keyboard/tmk_core/common/util.c **** {
+ 466               		.loc 1 92 1 is_stmt 1 view -0
+ 467               		.cfi_startproc
+ 468               		.loc 1 92 1 is_stmt 0 view .LVU124
+ 469 0000 CF93      		push r28
+ 470               	.LCFI2:
+ 471               		.cfi_def_cfa_offset 3
+ 472               		.cfi_offset 28, -2
+ 473 0002 DF93      		push r29
+ 474               	.LCFI3:
+ 475               		.cfi_def_cfa_offset 4
+ 476               		.cfi_offset 29, -3
+ 477               	/* prologue: function */
+ 478               	/* frame size = 0 */
+ 479               	/* stack size = 2 */
+ 480               	.L__stack_usage = 2
+ 481 0004 D92F      		mov r29,r25
+  93:./tmk_keyboard/tmk_core/common/util.c ****     bits = bitrev(bits & 0x00ff)<<8 | bitrev((bits & 0xff00)>>8);
+ 482               		.loc 1 93 5 is_stmt 1 view .LVU125
+ 483               		.loc 1 93 12 is_stmt 0 view .LVU126
+ 484 0006 0E94 0000 		call bitrev
+ 485               	.LVL51:
+ 486               		.loc 1 93 12 view .LVU127
+ 487 000a C82F      		mov r28,r24
+ 488               		.loc 1 93 39 view .LVU128
+ 489 000c 8D2F      		mov r24,r29
+ 490 000e 0E94 0000 		call bitrev
+ 491               	.LVL52:
+  94:./tmk_keyboard/tmk_core/common/util.c ****     return bits;
+ 492               		.loc 1 94 5 is_stmt 1 view .LVU129
+  95:./tmk_keyboard/tmk_core/common/util.c **** }
+ 493               		.loc 1 95 1 is_stmt 0 view .LVU130
+ 494 0012 9C2F      		mov r25,r28
+ 495               	/* epilogue start */
+ 496 0014 DF91      		pop r29
+ 497 0016 CF91      		pop r28
+ 498               	.LVL53:
+ 499               		.loc 1 95 1 view .LVU131
+ 500 0018 0895      		ret
+ 501               		.cfi_endproc
+ 502               	.LFE7:
+ 504               		.section	.text.bitrev32,"ax",@progbits
+ 505               	.global	bitrev32
+ 507               	bitrev32:
+ 508               	.LVL54:
+ 509               	.LFB8:
+  96:./tmk_keyboard/tmk_core/common/util.c **** 
+  97:./tmk_keyboard/tmk_core/common/util.c **** uint32_t bitrev32(uint32_t bits)
+  98:./tmk_keyboard/tmk_core/common/util.c **** {
+ 510               		.loc 1 98 1 is_stmt 1 view -0
+ 511               		.cfi_startproc
+ 512               		.loc 1 98 1 is_stmt 0 view .LVU133
+ 513 0000 0F93      		push r16
+ 514               	.LCFI4:
+ 515               		.cfi_def_cfa_offset 3
+ 516               		.cfi_offset 16, -2
+ 517 0002 1F93      		push r17
+ 518               	.LCFI5:
+ 519               		.cfi_def_cfa_offset 4
+ 520               		.cfi_offset 17, -3
+ 521 0004 CF93      		push r28
+ 522               	.LCFI6:
+ 523               		.cfi_def_cfa_offset 5
+ 524               		.cfi_offset 28, -4
+ 525 0006 DF93      		push r29
+ 526               	.LCFI7:
+ 527               		.cfi_def_cfa_offset 6
+ 528               		.cfi_offset 29, -5
+ 529 0008 00D0      		rcall .
+ 530 000a 00D0      		rcall .
+ 531               	.LCFI8:
+ 532               		.cfi_def_cfa_offset 10
+ 533 000c CDB7      		in r28,__SP_L__
+ 534 000e DEB7      		in r29,__SP_H__
+ 535               	.LCFI9:
+ 536               		.cfi_def_cfa_register 28
+ 537               	/* prologue: function */
+ 538               	/* frame size = 4 */
+ 539               	/* stack size = 8 */
+ 540               	.L__stack_usage = 8
+ 541 0010 8C01      		movw r16,r24
+  99:./tmk_keyboard/tmk_core/common/util.c ****     bits = (uint32_t)bitrev16(bits & 0x0000ffff)<<16 | bitrev16((bits & 0xffff0000)>>16);
+ 542               		.loc 1 99 5 is_stmt 1 view .LVU134
+ 543               		.loc 1 99 22 is_stmt 0 view .LVU135
+ 544 0012 CB01      		movw r24,r22
+ 545 0014 0E94 0000 		call bitrev16
+ 546               	.LVL55:
+ 547               		.loc 1 99 22 view .LVU136
+ 548 0018 8983      		std Y+1,r24
+ 549 001a 9A83      		std Y+2,r25
+ 550               		.loc 1 99 56 view .LVU137
+ 551 001c C801      		movw r24,r16
+ 552 001e 0E94 0000 		call bitrev16
+ 553               	.LVL56:
+ 100:./tmk_keyboard/tmk_core/common/util.c ****     return bits;
+ 554               		.loc 1 100 5 is_stmt 1 view .LVU138
+  99:./tmk_keyboard/tmk_core/common/util.c ****     bits = (uint32_t)bitrev16(bits & 0x0000ffff)<<16 | bitrev16((bits & 0xffff0000)>>16);
+ 555               		.loc 1 99 12 is_stmt 0 view .LVU139
+ 556 0022 0981      		ldd r16,Y+1
+ 557 0024 1A81      		ldd r17,Y+2
+ 558 0026 A801      		movw r20,r16
+ 559 0028 70E0      		ldi r23,0
+ 560 002a 60E0      		ldi r22,0
+  99:./tmk_keyboard/tmk_core/common/util.c ****     bits = (uint32_t)bitrev16(bits & 0x0000ffff)<<16 | bitrev16((bits & 0xffff0000)>>16);
+ 561               		.loc 1 99 49 view .LVU140
+ 562 002c BA01      		movw r22,r20
+ 563 002e 5527      		clr r21
+ 564 0030 4427      		clr r20
+  99:./tmk_keyboard/tmk_core/common/util.c ****     bits = (uint32_t)bitrev16(bits & 0x0000ffff)<<16 | bitrev16((bits & 0xffff0000)>>16);
+ 565               		.loc 1 99 56 view .LVU141
+ 566 0032 B0E0      		ldi r27,0
+ 567 0034 A0E0      		ldi r26,0
+  99:./tmk_keyboard/tmk_core/common/util.c ****     bits = (uint32_t)bitrev16(bits & 0x0000ffff)<<16 | bitrev16((bits & 0xffff0000)>>16);
+ 568               		.loc 1 99 10 view .LVU142
+ 569 0036 8A01      		movw r16,r20
+ 570 0038 9B01      		movw r18,r22
+ 571 003a 082B      		or r16,r24
+ 572 003c 192B      		or r17,r25
+ 573 003e 2A2B      		or r18,r26
+ 574 0040 3B2B      		or r19,r27
+ 101:./tmk_keyboard/tmk_core/common/util.c **** }
+ 575               		.loc 1 101 1 view .LVU143
+ 576 0042 C901      		movw r24,r18
+ 577               	.LVL57:
+ 578               		.loc 1 101 1 view .LVU144
+ 579 0044 B801      		movw r22,r16
+ 580               	/* epilogue start */
+ 581 0046 0F90      		pop __tmp_reg__
+ 582 0048 0F90      		pop __tmp_reg__
+ 583 004a 0F90      		pop __tmp_reg__
+ 584 004c 0F90      		pop __tmp_reg__
+ 585 004e DF91      		pop r29
+ 586 0050 CF91      		pop r28
+ 587 0052 1F91      		pop r17
+ 588 0054 0F91      		pop r16
+ 589 0056 0895      		ret
+ 590               		.cfi_endproc
+ 591               	.LFE8:
+ 593               		.text
+ 594               	.Letext0:
+ 595               		.file 2 "/usr/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 util.c
+     /tmp/cc2qOGLM.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc2qOGLM.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc2qOGLM.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc2qOGLM.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/cc2qOGLM.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc2qOGLM.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc2qOGLM.s:14     .text.bitpop:0000000000000000 bitpop
+     /tmp/cc2qOGLM.s:39     .text.bitpop16:0000000000000000 bitpop16
+     /tmp/cc2qOGLM.s:62     .text.bitpop32:0000000000000000 bitpop32
+     /tmp/cc2qOGLM.s:85     .text.biton:0000000000000000 biton
+     /tmp/cc2qOGLM.s:152    .text.biton16:0000000000000000 biton16
+     /tmp/cc2qOGLM.s:253    .text.biton32:0000000000000000 biton32
+     /tmp/cc2qOGLM.s:409    .text.bitrev:0000000000000000 bitrev
+     /tmp/cc2qOGLM.s:463    .text.bitrev16:0000000000000000 bitrev16
+     /tmp/cc2qOGLM.s:507    .text.bitrev32:0000000000000000 bitrev32
+
+UNDEFINED SYMBOLS
+__popcounthi2
+__popcountsi2

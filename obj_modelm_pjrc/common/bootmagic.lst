@@ -1,0 +1,1434 @@
+   1               		.file	"bootmagic.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               		.section	.text.scan_key,"ax",@progbits
+  13               	scan_key:
+  14               	.LVL0:
+  15               	.LFB11:
+  16               		.file 1 "./tmk_keyboard/tmk_core/common/bootmagic.c"
+   1:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include <stdint.h>
+   2:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include <stdbool.h>
+   3:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "wait.h"
+   4:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "matrix.h"
+   5:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "bootloader.h"
+   6:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "debug.h"
+   7:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "keymap.h"
+   8:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "actionmap.h"
+   9:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "host.h"
+  10:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "action_layer.h"
+  11:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "eeconfig.h"
+  12:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "bootmagic.h"
+  13:./tmk_keyboard/tmk_core/common/bootmagic.c **** #include "hook.h"
+  14:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  15:./tmk_keyboard/tmk_core/common/bootmagic.c **** keymap_config_t keymap_config;
+  16:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  17:./tmk_keyboard/tmk_core/common/bootmagic.c **** void bootmagic(void)
+  18:./tmk_keyboard/tmk_core/common/bootmagic.c **** {
+  19:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* check signature */
+  20:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (!eeconfig_is_enabled()) {
+  21:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+  22:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  23:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  24:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* do scans in case of bounce */
+  25:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("bootmagic scan: ... ");
+  26:./tmk_keyboard/tmk_core/common/bootmagic.c ****     uint8_t scan = 100;
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     while (scan--) { matrix_scan(); wait_ms(10); }
+  28:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+  29:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  30:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* bootmagic skip */
+  31:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SKIP)) {
+  32:./tmk_keyboard/tmk_core/common/bootmagic.c ****         return;
+  33:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  34:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  35:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* eeconfig clear */
+  36:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_EEPROM_CLEAR)) {
+  37:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+  38:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  39:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  40:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* bootloader */
+  41:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_BOOTLOADER)) {
+  42:./tmk_keyboard/tmk_core/common/bootmagic.c ****         bootloader_jump();
+  43:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  44:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  45:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* user-defined checks */
+  46:./tmk_keyboard/tmk_core/common/bootmagic.c ****     hook_bootmagic();
+  47:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  48:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* debug enable */
+  49:./tmk_keyboard/tmk_core/common/bootmagic.c ****     debug_config.raw = eeconfig_read_debug();
+  50:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_ENABLE)) {
+  51:./tmk_keyboard/tmk_core/common/bootmagic.c ****         if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MATRIX)) {
+  52:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.matrix = !debug_config.matrix;
+  53:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_KEYBOARD)) {
+  54:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.keyboard = !debug_config.keyboard;
+  55:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MOUSE)) {
+  56:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.mouse = !debug_config.mouse;
+  57:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else {
+  58:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.enable = !debug_config.enable;
+  59:./tmk_keyboard/tmk_core/common/bootmagic.c ****         }
+  60:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  61:./tmk_keyboard/tmk_core/common/bootmagic.c ****     eeconfig_write_debug(debug_config.raw);
+  62:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  63:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* keymap config */
+  64:./tmk_keyboard/tmk_core/common/bootmagic.c ****     keymap_config.raw = eeconfig_read_keymap();
+  65:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_CONTROL_CAPSLOCK)) {
+  66:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_control_capslock = !keymap_config.swap_control_capslock;
+  67:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  68:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_CAPSLOCK_TO_CONTROL)) {
+  69:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.capslock_to_control = !keymap_config.capslock_to_control;
+  70:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  71:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_LALT_LGUI)) {
+  72:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_lalt_lgui = !keymap_config.swap_lalt_lgui;
+  73:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  74:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_RALT_RGUI)) {
+  75:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_ralt_rgui = !keymap_config.swap_ralt_rgui;
+  76:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  77:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_NO_GUI)) {
+  78:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.no_gui = !keymap_config.no_gui;
+  79:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  80:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_GRAVE_ESC)) {
+  81:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_grave_esc = !keymap_config.swap_grave_esc;
+  82:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  83:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_BACKSLASH_BACKSPACE)) {
+  84:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_backslash_backspace = !keymap_config.swap_backslash_backspace;
+  85:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  86:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_HOST_NKRO)) {
+  87:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.nkro = !keymap_config.nkro;
+  88:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+  89:./tmk_keyboard/tmk_core/common/bootmagic.c ****     eeconfig_write_keymap(keymap_config.raw);
+  90:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  91:./tmk_keyboard/tmk_core/common/bootmagic.c **** #ifdef NKRO_ENABLE
+  92:./tmk_keyboard/tmk_core/common/bootmagic.c ****     keyboard_nkro = keymap_config.nkro;
+  93:./tmk_keyboard/tmk_core/common/bootmagic.c **** #endif
+  94:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+  95:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* default layer */
+  96:./tmk_keyboard/tmk_core/common/bootmagic.c ****     uint8_t default_layer = 0;
+  97:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_0)) { default_layer |= (1<<0); }
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_1)) { default_layer |= (1<<1); }
+  99:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 100:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_3)) { default_layer |= (1<<3); }
+ 101:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_4)) { default_layer |= (1<<4); }
+ 102:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_5)) { default_layer |= (1<<5); }
+ 103:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_6)) { default_layer |= (1<<6); }
+ 104:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_7)) { default_layer |= (1<<7); }
+ 105:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (default_layer) {
+ 106:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_write_default_layer(default_layer);
+ 107:./tmk_keyboard/tmk_core/common/bootmagic.c ****         default_layer_set((uint32_t)default_layer);
+ 108:./tmk_keyboard/tmk_core/common/bootmagic.c ****     } else {
+ 109:./tmk_keyboard/tmk_core/common/bootmagic.c ****         default_layer = eeconfig_read_default_layer();
+ 110:./tmk_keyboard/tmk_core/common/bootmagic.c ****         default_layer_set((uint32_t)default_layer);
+ 111:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 112:./tmk_keyboard/tmk_core/common/bootmagic.c **** }
+ 113:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 114:./tmk_keyboard/tmk_core/common/bootmagic.c **** static bool scan_key(uint16_t code)
+ 115:./tmk_keyboard/tmk_core/common/bootmagic.c **** {
+  17               		.loc 1 115 1 view -0
+  18               		.cfi_startproc
+  19               		.loc 1 115 1 is_stmt 0 view .LVU1
+  20 0000 9F92      		push r9
+  21               	.LCFI0:
+  22               		.cfi_def_cfa_offset 3
+  23               		.cfi_offset 9, -2
+  24 0002 AF92      		push r10
+  25               	.LCFI1:
+  26               		.cfi_def_cfa_offset 4
+  27               		.cfi_offset 10, -3
+  28 0004 BF92      		push r11
+  29               	.LCFI2:
+  30               		.cfi_def_cfa_offset 5
+  31               		.cfi_offset 11, -4
+  32 0006 CF92      		push r12
+  33               	.LCFI3:
+  34               		.cfi_def_cfa_offset 6
+  35               		.cfi_offset 12, -5
+  36 0008 DF92      		push r13
+  37               	.LCFI4:
+  38               		.cfi_def_cfa_offset 7
+  39               		.cfi_offset 13, -6
+  40 000a EF92      		push r14
+  41               	.LCFI5:
+  42               		.cfi_def_cfa_offset 8
+  43               		.cfi_offset 14, -7
+  44 000c FF92      		push r15
+  45               	.LCFI6:
+  46               		.cfi_def_cfa_offset 9
+  47               		.cfi_offset 15, -8
+  48 000e 0F93      		push r16
+  49               	.LCFI7:
+  50               		.cfi_def_cfa_offset 10
+  51               		.cfi_offset 16, -9
+  52 0010 1F93      		push r17
+  53               	.LCFI8:
+  54               		.cfi_def_cfa_offset 11
+  55               		.cfi_offset 17, -10
+  56 0012 CF93      		push r28
+  57               	.LCFI9:
+  58               		.cfi_def_cfa_offset 12
+  59               		.cfi_offset 28, -11
+  60 0014 DF93      		push r29
+  61               	.LCFI10:
+  62               		.cfi_def_cfa_offset 13
+  63               		.cfi_offset 29, -12
+  64               	/* prologue: function */
+  65               	/* frame size = 0 */
+  66               	/* stack size = 11 */
+  67               	.L__stack_usage = 11
+  68 0016 8C01      		movw r16,r24
+ 116:./tmk_keyboard/tmk_core/common/bootmagic.c ****     for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
+  69               		.loc 1 116 5 is_stmt 1 view .LVU2
+  70               	.LBB6:
+  71               		.loc 1 116 10 view .LVU3
+  72               	.LVL1:
+  73               		.loc 1 116 27 view .LVU4
+  74               	.LBE6:
+ 115:./tmk_keyboard/tmk_core/common/bootmagic.c ****     for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
+  75               		.loc 1 115 1 is_stmt 0 view .LVU5
+  76 0018 D0E0      		ldi r29,0
+  77 001a C0E0      		ldi r28,0
+  78               	.LBB14:
+  79               	.LBB7:
+  80               	.LBB8:
+ 117:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****         for (uint8_t c = 0; c < MATRIX_COLS; c++) {
+ 119:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+  81               		.loc 1 119 46 view .LVU6
+  82 001c CC24      		clr r12
+  83 001e C394      		inc r12
+  84 0020 D12C      		mov r13,__zero_reg__
+  85               	.LVL2:
+  86               	.L8:
+  87               		.loc 1 119 46 view .LVU7
+  88 0022 9C2E      		mov r9,r28
+  89               	.LVL3:
+  90               		.loc 1 119 46 view .LVU8
+  91               	.LBE8:
+ 117:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+  92               		.loc 1 117 9 is_stmt 1 view .LVU9
+ 117:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+  93               		.loc 1 117 35 is_stmt 0 view .LVU10
+  94 0024 CE01      		movw r24,r28
+  95 0026 0E94 0000 		call matrix_get_row
+  96               	.LVL4:
+ 117:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+  97               		.loc 1 117 35 view .LVU11
+  98 002a 7C01      		movw r14,r24
+  99               	.LVL5:
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+ 100               		.loc 1 118 9 is_stmt 1 view .LVU12
+ 101               	.LBB10:
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+ 102               		.loc 1 118 14 view .LVU13
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+ 103               		.loc 1 118 31 view .LVU14
+ 104               	.LBE10:
+ 117:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+ 105               		.loc 1 117 35 is_stmt 0 view .LVU15
+ 106 002c B12C      		mov r11,__zero_reg__
+ 107 002e A12C      		mov r10,__zero_reg__
+ 108               	.LVL6:
+ 109               	.L7:
+ 110               	.LBB11:
+ 111               		.loc 1 119 13 is_stmt 1 view .LVU16
+ 112               		.loc 1 119 46 is_stmt 0 view .LVU17
+ 113 0030 C601      		movw r24,r12
+ 114 0032 0A2C      		mov r0,r10
+ 115 0034 00C0      		rjmp 2f
+ 116               		1:
+ 117 0036 880F      		lsl r24
+ 118 0038 991F      		rol r25
+ 119               		2:
+ 120 003a 0A94      		dec r0
+ 121 003c 02F4      		brpl 1b
+ 122               		.loc 1 119 28 view .LVU18
+ 123 003e 8E21      		and r24,r14
+ 124 0040 9F21      		and r25,r15
+ 125               		.loc 1 119 16 view .LVU19
+ 126 0042 892B      		or r24,r25
+ 127 0044 01F0      		breq .L2
+ 128               	.LBB9:
+ 120:./tmk_keyboard/tmk_core/common/bootmagic.c ****                 // read key from Layer 0
+ 121:./tmk_keyboard/tmk_core/common/bootmagic.c ****                 action_t action = action_for_key(0, (keypos_t){ .row = r, .col = c });
+ 129               		.loc 1 121 17 is_stmt 1 view .LVU20
+ 130               		.loc 1 121 35 is_stmt 0 view .LVU21
+ 131 0046 6A2D      		mov r22,r10
+ 132 0048 792D      		mov r23,r9
+ 133 004a 80E0      		ldi r24,0
+ 134 004c 0E94 0000 		call action_for_key
+ 135               	.LVL7:
+ 136               		.loc 1 121 35 view .LVU22
+ 137 0050 9C01      		movw r18,r24
+ 122:./tmk_keyboard/tmk_core/common/bootmagic.c ****                 if (action.code == code ||
+ 138               		.loc 1 122 17 is_stmt 1 view .LVU23
+ 139               	.LVL8:
+ 140               		.loc 1 122 20 is_stmt 0 view .LVU24
+ 141 0052 8017      		cp r24,r16
+ 142 0054 9107      		cpc r25,r17
+ 143 0056 01F0      		breq .L3
+ 144               		.loc 1 122 41 discriminator 1 view .LVU25
+ 145 0058 832F      		mov r24,r19
+ 146               	.LVL9:
+ 147               		.loc 1 122 41 discriminator 1 view .LVU26
+ 148 005a 807E      		andi r24,lo8(-32)
+ 149 005c 932F      		mov r25,r19
+ 150 005e 907C      		andi r25,lo8(-64)
+ 151 0060 01F0      		breq .L4
+ 123:./tmk_keyboard/tmk_core/common/bootmagic.c ****                     ((action.kind.id == ACT_LMODS ||
+ 124:./tmk_keyboard/tmk_core/common/bootmagic.c ****                       action.kind.id == ACT_RMODS ||
+ 125:./tmk_keyboard/tmk_core/common/bootmagic.c ****                       action.kind.id == ACT_LMODS_TAP ||
+ 126:./tmk_keyboard/tmk_core/common/bootmagic.c ****                       action.kind.id == ACT_RMODS_TAP ||
+ 152               		.loc 1 126 55 view .LVU27
+ 153 0062 803A      		cpi r24,lo8(-96)
+ 154 0064 01F4      		brne .L2
+ 155               	.L4:
+ 127:./tmk_keyboard/tmk_core/common/bootmagic.c ****                       action.kind.id == ACT_LAYER_TAP ||
+ 128:./tmk_keyboard/tmk_core/common/bootmagic.c ****                       action.kind.id == ACT_LAYER_TAP_EXT) &&
+ 156               		.loc 1 128 60 view .LVU28
+ 157 0066 2017      		cp r18,r16
+ 158 0068 1106      		cpc __zero_reg__,r17
+ 159 006a 01F4      		brne .L2
+ 160               	.LVL10:
+ 161               	.L3:
+ 129:./tmk_keyboard/tmk_core/common/bootmagic.c ****                      action.key.code == code)) {
+ 130:./tmk_keyboard/tmk_core/common/bootmagic.c ****                     return true;
+ 162               		.loc 1 130 21 is_stmt 1 view .LVU29
+ 163               		.loc 1 130 28 is_stmt 0 view .LVU30
+ 164 006c 81E0      		ldi r24,lo8(1)
+ 165               	.LVL11:
+ 166               	.L1:
+ 167               	/* epilogue start */
+ 168               		.loc 1 130 28 view .LVU31
+ 169               	.LBE9:
+ 170               	.LBE11:
+ 171               	.LBE7:
+ 172               	.LBE14:
+ 131:./tmk_keyboard/tmk_core/common/bootmagic.c ****                 }
+ 132:./tmk_keyboard/tmk_core/common/bootmagic.c ****             }
+ 133:./tmk_keyboard/tmk_core/common/bootmagic.c ****         }
+ 134:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 135:./tmk_keyboard/tmk_core/common/bootmagic.c ****     return false;
+ 136:./tmk_keyboard/tmk_core/common/bootmagic.c **** }
+ 173               		.loc 1 136 1 view .LVU32
+ 174 006e DF91      		pop r29
+ 175 0070 CF91      		pop r28
+ 176 0072 1F91      		pop r17
+ 177 0074 0F91      		pop r16
+ 178               	.LVL12:
+ 179               		.loc 1 136 1 view .LVU33
+ 180 0076 FF90      		pop r15
+ 181 0078 EF90      		pop r14
+ 182               	.LVL13:
+ 183               		.loc 1 136 1 view .LVU34
+ 184 007a DF90      		pop r13
+ 185 007c CF90      		pop r12
+ 186 007e BF90      		pop r11
+ 187 0080 AF90      		pop r10
+ 188 0082 9F90      		pop r9
+ 189 0084 0895      		ret
+ 190               	.LVL14:
+ 191               	.L2:
+ 192               	.LBB15:
+ 193               	.LBB13:
+ 194               	.LBB12:
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+ 195               		.loc 1 118 47 is_stmt 1 discriminator 2 view .LVU35
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+ 196               		.loc 1 118 31 discriminator 2 view .LVU36
+ 197 0086 8FEF      		ldi r24,-1
+ 198 0088 A81A      		sub r10,r24
+ 199 008a B80A      		sbc r11,r24
+ 200               	.LVL15:
+ 118:./tmk_keyboard/tmk_core/common/bootmagic.c ****             if (matrix_row & ((matrix_row_t)1<<c)) {
+ 201               		.loc 1 118 31 is_stmt 0 discriminator 2 view .LVU37
+ 202 008c 88E0      		ldi r24,8
+ 203 008e A816      		cp r10,r24
+ 204 0090 B104      		cpc r11,__zero_reg__
+ 205 0092 01F4      		brne .L7
+ 206               	.LBE12:
+ 207               	.LBE13:
+ 116:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+ 208               		.loc 1 116 43 is_stmt 1 discriminator 2 view .LVU38
+ 209               	.LVL16:
+ 116:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+ 210               		.loc 1 116 27 discriminator 2 view .LVU39
+ 211 0094 2196      		adiw r28,1
+ 212               	.LVL17:
+ 116:./tmk_keyboard/tmk_core/common/bootmagic.c ****         matrix_row_t matrix_row = matrix_get_row(r);
+ 213               		.loc 1 116 27 is_stmt 0 discriminator 2 view .LVU40
+ 214 0096 C031      		cpi r28,16
+ 215 0098 D105      		cpc r29,__zero_reg__
+ 216 009a 01F4      		brne .L8
+ 217               	.LBE15:
+ 135:./tmk_keyboard/tmk_core/common/bootmagic.c **** }
+ 218               		.loc 1 135 12 view .LVU41
+ 219 009c 80E0      		ldi r24,0
+ 220 009e 00C0      		rjmp .L1
+ 221               		.cfi_endproc
+ 222               	.LFE11:
+ 224               		.section	.text.bootmagic_scan_key,"ax",@progbits
+ 225               	.global	bootmagic_scan_key
+ 227               	bootmagic_scan_key:
+ 228               	.LVL18:
+ 229               	.LFB12:
+ 137:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 138:./tmk_keyboard/tmk_core/common/bootmagic.c **** bool bootmagic_scan_key(uint16_t code)
+ 139:./tmk_keyboard/tmk_core/common/bootmagic.c **** {
+ 230               		.loc 1 139 1 is_stmt 1 view -0
+ 231               		.cfi_startproc
+ 232               		.loc 1 139 1 is_stmt 0 view .LVU43
+ 233 0000 CF93      		push r28
+ 234               	.LCFI11:
+ 235               		.cfi_def_cfa_offset 3
+ 236               		.cfi_offset 28, -2
+ 237 0002 DF93      		push r29
+ 238               	.LCFI12:
+ 239               		.cfi_def_cfa_offset 4
+ 240               		.cfi_offset 29, -3
+ 241               	/* prologue: function */
+ 242               	/* frame size = 0 */
+ 243               	/* stack size = 2 */
+ 244               	.L__stack_usage = 2
+ 245 0004 D82F      		mov r29,r24
+ 246 0006 C92F      		mov r28,r25
+ 140:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (!scan_key(BOOTMAGIC_KEY_SALT)) return false;
+ 247               		.loc 1 140 5 is_stmt 1 view .LVU44
+ 248               		.loc 1 140 10 is_stmt 0 view .LVU45
+ 249 0008 8CE2      		ldi r24,lo8(44)
+ 250 000a 90E0      		ldi r25,0
+ 251               	.LVL19:
+ 252               		.loc 1 140 10 view .LVU46
+ 253 000c 0E94 0000 		call scan_key
+ 254               	.LVL20:
+ 255               		.loc 1 140 8 view .LVU47
+ 256 0010 8823      		tst r24
+ 257 0012 01F0      		breq .L17
+ 141:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 142:./tmk_keyboard/tmk_core/common/bootmagic.c ****     return scan_key(code);
+ 258               		.loc 1 142 5 is_stmt 1 view .LVU48
+ 259               		.loc 1 142 12 is_stmt 0 view .LVU49
+ 260 0014 8D2F      		mov r24,r29
+ 261 0016 9C2F      		mov r25,r28
+ 262               	/* epilogue start */
+ 143:./tmk_keyboard/tmk_core/common/bootmagic.c **** }
+ 263               		.loc 1 143 1 view .LVU50
+ 264 0018 DF91      		pop r29
+ 265 001a CF91      		pop r28
+ 142:./tmk_keyboard/tmk_core/common/bootmagic.c **** }
+ 266               		.loc 1 142 12 view .LVU51
+ 267 001c 0C94 0000 		jmp scan_key
+ 268               	.LVL21:
+ 269               	.L17:
+ 270               		.loc 1 143 1 view .LVU52
+ 271 0020 80E0      		ldi r24,0
+ 272               	/* epilogue start */
+ 273 0022 DF91      		pop r29
+ 274 0024 CF91      		pop r28
+ 275 0026 0895      		ret
+ 276               		.cfi_endproc
+ 277               	.LFE12:
+ 279               		.section	.text.bootmagic,"ax",@progbits
+ 280               	.global	bootmagic
+ 282               	bootmagic:
+ 283               	.LFB10:
+  18:./tmk_keyboard/tmk_core/common/bootmagic.c ****     /* check signature */
+ 284               		.loc 1 18 1 is_stmt 1 view -0
+ 285               		.cfi_startproc
+ 286 0000 CF93      		push r28
+ 287               	.LCFI13:
+ 288               		.cfi_def_cfa_offset 3
+ 289               		.cfi_offset 28, -2
+ 290 0002 DF93      		push r29
+ 291               	.LCFI14:
+ 292               		.cfi_def_cfa_offset 4
+ 293               		.cfi_offset 29, -3
+ 294 0004 00D0      		rcall .
+ 295 0006 00D0      		rcall .
+ 296               	.LCFI15:
+ 297               		.cfi_def_cfa_offset 8
+ 298 0008 CDB7      		in r28,__SP_L__
+ 299 000a DEB7      		in r29,__SP_H__
+ 300               	.LCFI16:
+ 301               		.cfi_def_cfa_register 28
+ 302               	/* prologue: function */
+ 303               	/* frame size = 4 */
+ 304               	/* stack size = 6 */
+ 305               	.L__stack_usage = 6
+  20:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+ 306               		.loc 1 20 5 view .LVU54
+  20:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+ 307               		.loc 1 20 10 is_stmt 0 view .LVU55
+ 308 000c 0E94 0000 		call eeconfig_is_enabled
+ 309               	.LVL22:
+  20:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+ 310               		.loc 1 20 8 view .LVU56
+ 311 0010 8111      		cpse r24,__zero_reg__
+ 312 0012 00C0      		rjmp .L20
+  21:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 313               		.loc 1 21 9 is_stmt 1 view .LVU57
+ 314 0014 0E94 0000 		call eeconfig_init
+ 315               	.LVL23:
+ 316               	.L20:
+  25:./tmk_keyboard/tmk_core/common/bootmagic.c ****     uint8_t scan = 100;
+ 317               		.loc 1 25 5 view .LVU58
+ 318               	.LBB16:
+  25:./tmk_keyboard/tmk_core/common/bootmagic.c ****     uint8_t scan = 100;
+ 319               		.loc 1 25 5 view .LVU59
+  25:./tmk_keyboard/tmk_core/common/bootmagic.c ****     uint8_t scan = 100;
+ 320               		.loc 1 25 5 view .LVU60
+ 321               	.LBE16:
+ 322 0018 80E0      		ldi r24,lo8(__c.1)
+ 323 001a 90E0      		ldi r25,hi8(__c.1)
+ 324 001c 0E94 0000 		call xputs
+ 325               	.LVL24:
+  26:./tmk_keyboard/tmk_core/common/bootmagic.c ****     while (scan--) { matrix_scan(); wait_ms(10); }
+ 326               		.loc 1 26 5 view .LVU61
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 327               		.loc 1 27 5 view .LVU62
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 328               		.loc 1 27 11 is_stmt 0 view .LVU63
+ 329 0020 25E6      		ldi r18,lo8(101)
+ 330 0022 2983      		std Y+1,r18
+ 331               	.LVL25:
+ 332               	.L21:
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 333               		.loc 1 27 12 is_stmt 1 discriminator 1 view .LVU64
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 334               		.loc 1 27 12 is_stmt 0 discriminator 1 view .LVU65
+ 335 0024 9981      		ldd r25,Y+1
+ 336 0026 9150      		subi r25,lo8(-(-1))
+ 337 0028 9983      		std Y+1,r25
+ 338               	.LVL26:
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 339               		.loc 1 27 12 discriminator 1 view .LVU66
+ 340 002a 9111      		cpse r25,__zero_reg__
+ 341 002c 00C0      		rjmp .L22
+  28:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 342               		.loc 1 28 5 is_stmt 1 view .LVU67
+ 343               	.LBB17:
+  28:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 344               		.loc 1 28 5 view .LVU68
+  28:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 345               		.loc 1 28 5 view .LVU69
+ 346               	.LBE17:
+ 347 002e 80E0      		ldi r24,lo8(__c.0)
+ 348 0030 90E0      		ldi r25,hi8(__c.0)
+ 349 0032 0E94 0000 		call xputs
+ 350               	.LVL27:
+  31:./tmk_keyboard/tmk_core/common/bootmagic.c ****         return;
+ 351               		.loc 1 31 5 view .LVU70
+  31:./tmk_keyboard/tmk_core/common/bootmagic.c ****         return;
+ 352               		.loc 1 31 9 is_stmt 0 view .LVU71
+ 353 0036 89E2      		ldi r24,lo8(41)
+ 354 0038 90E0      		ldi r25,0
+ 355 003a 0E94 0000 		call bootmagic_scan_key
+ 356               	.LVL28:
+  31:./tmk_keyboard/tmk_core/common/bootmagic.c ****         return;
+ 357               		.loc 1 31 8 view .LVU72
+ 358 003e 8111      		cpse r24,__zero_reg__
+ 359 0040 00C0      		rjmp .L19
+  36:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+ 360               		.loc 1 36 5 is_stmt 1 view .LVU73
+  36:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+ 361               		.loc 1 36 9 is_stmt 0 view .LVU74
+ 362 0042 8AE2      		ldi r24,lo8(42)
+ 363 0044 90E0      		ldi r25,0
+ 364 0046 0E94 0000 		call bootmagic_scan_key
+ 365               	.LVL29:
+  36:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_init();
+ 366               		.loc 1 36 8 view .LVU75
+ 367 004a 8111      		cpse r24,__zero_reg__
+  37:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 368               		.loc 1 37 9 is_stmt 1 view .LVU76
+ 369 004c 0E94 0000 		call eeconfig_init
+ 370               	.LVL30:
+ 371               	.L24:
+  41:./tmk_keyboard/tmk_core/common/bootmagic.c ****         bootloader_jump();
+ 372               		.loc 1 41 5 view .LVU77
+  41:./tmk_keyboard/tmk_core/common/bootmagic.c ****         bootloader_jump();
+ 373               		.loc 1 41 9 is_stmt 0 view .LVU78
+ 374 0050 85E0      		ldi r24,lo8(5)
+ 375 0052 90E0      		ldi r25,0
+ 376 0054 0E94 0000 		call bootmagic_scan_key
+ 377               	.LVL31:
+  41:./tmk_keyboard/tmk_core/common/bootmagic.c ****         bootloader_jump();
+ 378               		.loc 1 41 8 view .LVU79
+ 379 0058 8111      		cpse r24,__zero_reg__
+  42:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 380               		.loc 1 42 9 is_stmt 1 view .LVU80
+ 381 005a 0E94 0000 		call bootloader_jump
+ 382               	.LVL32:
+ 383               	.L25:
+  46:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 384               		.loc 1 46 5 view .LVU81
+ 385 005e 0E94 0000 		call hook_bootmagic
+ 386               	.LVL33:
+  49:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_ENABLE)) {
+ 387               		.loc 1 49 5 view .LVU82
+  49:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_ENABLE)) {
+ 388               		.loc 1 49 24 is_stmt 0 view .LVU83
+ 389 0062 0E94 0000 		call eeconfig_read_debug
+ 390               	.LVL34:
+  49:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_ENABLE)) {
+ 391               		.loc 1 49 22 view .LVU84
+ 392 0066 8093 0000 		sts debug_config,r24
+  50:./tmk_keyboard/tmk_core/common/bootmagic.c ****         if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MATRIX)) {
+ 393               		.loc 1 50 5 is_stmt 1 view .LVU85
+  50:./tmk_keyboard/tmk_core/common/bootmagic.c ****         if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MATRIX)) {
+ 394               		.loc 1 50 9 is_stmt 0 view .LVU86
+ 395 006a 87E0      		ldi r24,lo8(7)
+ 396 006c 90E0      		ldi r25,0
+ 397 006e 0E94 0000 		call bootmagic_scan_key
+ 398               	.LVL35:
+  50:./tmk_keyboard/tmk_core/common/bootmagic.c ****         if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MATRIX)) {
+ 399               		.loc 1 50 8 view .LVU87
+ 400 0072 8823      		tst r24
+ 401 0074 01F0      		breq .L26
+  51:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.matrix = !debug_config.matrix;
+ 402               		.loc 1 51 9 is_stmt 1 view .LVU88
+  51:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.matrix = !debug_config.matrix;
+ 403               		.loc 1 51 13 is_stmt 0 view .LVU89
+ 404 0076 8BE1      		ldi r24,lo8(27)
+ 405 0078 90E0      		ldi r25,0
+ 406 007a 0E94 0000 		call bootmagic_scan_key
+ 407               	.LVL36:
+  51:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.matrix = !debug_config.matrix;
+ 408               		.loc 1 51 12 view .LVU90
+ 409 007e 8823      		tst r24
+ 410 0080 01F4      		brne .+2
+ 411 0082 00C0      		rjmp .L27
+  52:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_KEYBOARD)) {
+ 412               		.loc 1 52 13 is_stmt 1 view .LVU91
+  52:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_KEYBOARD)) {
+ 413               		.loc 1 52 48 is_stmt 0 view .LVU92
+ 414 0084 9091 0000 		lds r25,debug_config
+  52:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_KEYBOARD)) {
+ 415               		.loc 1 52 33 view .LVU93
+ 416 0088 892F      		mov r24,r25
+ 417 008a 8D7F      		andi r24,~(1<<1)
+ 418 008c 91FF      		sbrs r25,1
+ 419 008e 8260      		ori r24,1<<1
+ 420               	.L98:
+  58:./tmk_keyboard/tmk_core/common/bootmagic.c ****         }
+ 421               		.loc 1 58 33 view .LVU94
+ 422 0090 8093 0000 		sts debug_config,r24
+ 423               	.LVL37:
+ 424               	.L26:
+  61:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 425               		.loc 1 61 5 is_stmt 1 view .LVU95
+ 426 0094 8091 0000 		lds r24,debug_config
+ 427 0098 0E94 0000 		call eeconfig_write_debug
+ 428               	.LVL38:
+  64:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_CONTROL_CAPSLOCK)) {
+ 429               		.loc 1 64 5 view .LVU96
+  64:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_CONTROL_CAPSLOCK)) {
+ 430               		.loc 1 64 25 is_stmt 0 view .LVU97
+ 431 009c 0E94 0000 		call eeconfig_read_keymap
+ 432               	.LVL39:
+  64:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_SWAP_CONTROL_CAPSLOCK)) {
+ 433               		.loc 1 64 23 view .LVU98
+ 434 00a0 8093 0000 		sts keymap_config,r24
+  65:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_control_capslock = !keymap_config.swap_control_capslock;
+ 435               		.loc 1 65 5 is_stmt 1 view .LVU99
+  65:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_control_capslock = !keymap_config.swap_control_capslock;
+ 436               		.loc 1 65 9 is_stmt 0 view .LVU100
+ 437 00a4 80EE      		ldi r24,lo8(-32)
+ 438 00a6 90E0      		ldi r25,0
+ 439 00a8 0E94 0000 		call bootmagic_scan_key
+ 440               	.LVL40:
+  65:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_control_capslock = !keymap_config.swap_control_capslock;
+ 441               		.loc 1 65 8 view .LVU101
+ 442 00ac 8823      		tst r24
+ 443 00ae 01F0      		breq .L30
+  66:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 444               		.loc 1 66 9 is_stmt 1 view .LVU102
+  66:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 445               		.loc 1 66 61 is_stmt 0 view .LVU103
+ 446 00b0 9091 0000 		lds r25,keymap_config
+  66:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 447               		.loc 1 66 45 view .LVU104
+ 448 00b4 892F      		mov r24,r25
+ 449 00b6 8E7F      		andi r24,~(1<<0)
+ 450 00b8 90FF      		sbrs r25,0
+ 451 00ba 8160      		ori r24,1<<0
+ 452 00bc 8093 0000 		sts keymap_config,r24
+ 453               	.L30:
+  68:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.capslock_to_control = !keymap_config.capslock_to_control;
+ 454               		.loc 1 68 5 is_stmt 1 view .LVU105
+  68:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.capslock_to_control = !keymap_config.capslock_to_control;
+ 455               		.loc 1 68 9 is_stmt 0 view .LVU106
+ 456 00c0 89E3      		ldi r24,lo8(57)
+ 457 00c2 90E0      		ldi r25,0
+ 458 00c4 0E94 0000 		call bootmagic_scan_key
+ 459               	.LVL41:
+  68:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.capslock_to_control = !keymap_config.capslock_to_control;
+ 460               		.loc 1 68 8 view .LVU107
+ 461 00c8 8823      		tst r24
+ 462 00ca 01F0      		breq .L31
+  69:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 463               		.loc 1 69 9 is_stmt 1 view .LVU108
+  69:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 464               		.loc 1 69 59 is_stmt 0 view .LVU109
+ 465 00cc 9091 0000 		lds r25,keymap_config
+  69:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 466               		.loc 1 69 43 view .LVU110
+ 467 00d0 892F      		mov r24,r25
+ 468 00d2 8D7F      		andi r24,~(1<<1)
+ 469 00d4 91FF      		sbrs r25,1
+ 470 00d6 8260      		ori r24,1<<1
+ 471 00d8 8093 0000 		sts keymap_config,r24
+ 472               	.L31:
+  71:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_lalt_lgui = !keymap_config.swap_lalt_lgui;
+ 473               		.loc 1 71 5 is_stmt 1 view .LVU111
+  71:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_lalt_lgui = !keymap_config.swap_lalt_lgui;
+ 474               		.loc 1 71 9 is_stmt 0 view .LVU112
+ 475 00dc 82EE      		ldi r24,lo8(-30)
+ 476 00de 90E0      		ldi r25,0
+ 477 00e0 0E94 0000 		call bootmagic_scan_key
+ 478               	.LVL42:
+  71:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_lalt_lgui = !keymap_config.swap_lalt_lgui;
+ 479               		.loc 1 71 8 view .LVU113
+ 480 00e4 8823      		tst r24
+ 481 00e6 01F0      		breq .L32
+  72:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 482               		.loc 1 72 9 is_stmt 1 view .LVU114
+  72:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 483               		.loc 1 72 54 is_stmt 0 view .LVU115
+ 484 00e8 9091 0000 		lds r25,keymap_config
+  72:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 485               		.loc 1 72 38 view .LVU116
+ 486 00ec 892F      		mov r24,r25
+ 487 00ee 8B7F      		andi r24,~(1<<2)
+ 488 00f0 92FF      		sbrs r25,2
+ 489 00f2 8460      		ori r24,1<<2
+ 490 00f4 8093 0000 		sts keymap_config,r24
+ 491               	.L32:
+  74:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_ralt_rgui = !keymap_config.swap_ralt_rgui;
+ 492               		.loc 1 74 5 is_stmt 1 view .LVU117
+  74:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_ralt_rgui = !keymap_config.swap_ralt_rgui;
+ 493               		.loc 1 74 9 is_stmt 0 view .LVU118
+ 494 00f8 86EE      		ldi r24,lo8(-26)
+ 495 00fa 90E0      		ldi r25,0
+ 496 00fc 0E94 0000 		call bootmagic_scan_key
+ 497               	.LVL43:
+  74:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_ralt_rgui = !keymap_config.swap_ralt_rgui;
+ 498               		.loc 1 74 8 view .LVU119
+ 499 0100 8823      		tst r24
+ 500 0102 01F0      		breq .L33
+  75:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 501               		.loc 1 75 9 is_stmt 1 view .LVU120
+  75:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 502               		.loc 1 75 54 is_stmt 0 view .LVU121
+ 503 0104 9091 0000 		lds r25,keymap_config
+  75:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 504               		.loc 1 75 38 view .LVU122
+ 505 0108 892F      		mov r24,r25
+ 506 010a 877F      		andi r24,~(1<<3)
+ 507 010c 93FF      		sbrs r25,3
+ 508 010e 8860      		ori r24,1<<3
+ 509 0110 8093 0000 		sts keymap_config,r24
+ 510               	.L33:
+  77:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.no_gui = !keymap_config.no_gui;
+ 511               		.loc 1 77 5 is_stmt 1 view .LVU123
+  77:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.no_gui = !keymap_config.no_gui;
+ 512               		.loc 1 77 9 is_stmt 0 view .LVU124
+ 513 0114 83EE      		ldi r24,lo8(-29)
+ 514 0116 90E0      		ldi r25,0
+ 515 0118 0E94 0000 		call bootmagic_scan_key
+ 516               	.LVL44:
+  77:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.no_gui = !keymap_config.no_gui;
+ 517               		.loc 1 77 8 view .LVU125
+ 518 011c 8823      		tst r24
+ 519 011e 01F0      		breq .L34
+  78:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 520               		.loc 1 78 9 is_stmt 1 view .LVU126
+  78:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 521               		.loc 1 78 46 is_stmt 0 view .LVU127
+ 522 0120 9091 0000 		lds r25,keymap_config
+  78:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 523               		.loc 1 78 30 view .LVU128
+ 524 0124 892F      		mov r24,r25
+ 525 0126 8F7E      		andi r24,~(1<<4)
+ 526 0128 94FF      		sbrs r25,4
+ 527 012a 8061      		ori r24,1<<4
+ 528 012c 8093 0000 		sts keymap_config,r24
+ 529               	.L34:
+  80:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_grave_esc = !keymap_config.swap_grave_esc;
+ 530               		.loc 1 80 5 is_stmt 1 view .LVU129
+  80:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_grave_esc = !keymap_config.swap_grave_esc;
+ 531               		.loc 1 80 9 is_stmt 0 view .LVU130
+ 532 0130 85E3      		ldi r24,lo8(53)
+ 533 0132 90E0      		ldi r25,0
+ 534 0134 0E94 0000 		call bootmagic_scan_key
+ 535               	.LVL45:
+  80:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_grave_esc = !keymap_config.swap_grave_esc;
+ 536               		.loc 1 80 8 view .LVU131
+ 537 0138 8823      		tst r24
+ 538 013a 01F0      		breq .L35
+  81:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 539               		.loc 1 81 9 is_stmt 1 view .LVU132
+  81:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 540               		.loc 1 81 54 is_stmt 0 view .LVU133
+ 541 013c 9091 0000 		lds r25,keymap_config
+  81:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 542               		.loc 1 81 38 view .LVU134
+ 543 0140 892F      		mov r24,r25
+ 544 0142 8F7D      		andi r24,~(1<<5)
+ 545 0144 95FF      		sbrs r25,5
+ 546 0146 8062      		ori r24,1<<5
+ 547 0148 8093 0000 		sts keymap_config,r24
+ 548               	.L35:
+  83:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_backslash_backspace = !keymap_config.swap_backslash_backspace;
+ 549               		.loc 1 83 5 is_stmt 1 view .LVU135
+  83:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_backslash_backspace = !keymap_config.swap_backslash_backspace;
+ 550               		.loc 1 83 9 is_stmt 0 view .LVU136
+ 551 014c 81E3      		ldi r24,lo8(49)
+ 552 014e 90E0      		ldi r25,0
+ 553 0150 0E94 0000 		call bootmagic_scan_key
+ 554               	.LVL46:
+  83:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.swap_backslash_backspace = !keymap_config.swap_backslash_backspace;
+ 555               		.loc 1 83 8 view .LVU137
+ 556 0154 8823      		tst r24
+ 557 0156 01F0      		breq .L36
+  84:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 558               		.loc 1 84 9 is_stmt 1 view .LVU138
+  84:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 559               		.loc 1 84 64 is_stmt 0 view .LVU139
+ 560 0158 9091 0000 		lds r25,keymap_config
+  84:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 561               		.loc 1 84 48 view .LVU140
+ 562 015c 892F      		mov r24,r25
+ 563 015e 8F7B      		andi r24,~(1<<6)
+ 564 0160 96FF      		sbrs r25,6
+ 565 0162 8064      		ori r24,1<<6
+ 566 0164 8093 0000 		sts keymap_config,r24
+ 567               	.L36:
+  86:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.nkro = !keymap_config.nkro;
+ 568               		.loc 1 86 5 is_stmt 1 view .LVU141
+  86:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.nkro = !keymap_config.nkro;
+ 569               		.loc 1 86 9 is_stmt 0 view .LVU142
+ 570 0168 81E1      		ldi r24,lo8(17)
+ 571 016a 90E0      		ldi r25,0
+ 572 016c 0E94 0000 		call bootmagic_scan_key
+ 573               	.LVL47:
+  86:./tmk_keyboard/tmk_core/common/bootmagic.c ****         keymap_config.nkro = !keymap_config.nkro;
+ 574               		.loc 1 86 8 view .LVU143
+ 575 0170 8823      		tst r24
+ 576 0172 01F0      		breq .L37
+  87:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 577               		.loc 1 87 9 is_stmt 1 view .LVU144
+  87:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 578               		.loc 1 87 44 is_stmt 0 view .LVU145
+ 579 0174 9091 0000 		lds r25,keymap_config
+  87:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 580               		.loc 1 87 28 view .LVU146
+ 581 0178 892F      		mov r24,r25
+ 582 017a 97FB      		bst r25,7
+ 583 017c 87F9      		bld r24,7
+ 584 017e 8058      		subi r24,0x80
+ 585 0180 8093 0000 		sts keymap_config,r24
+ 586               	.L37:
+  89:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 587               		.loc 1 89 5 is_stmt 1 view .LVU147
+ 588 0184 8091 0000 		lds r24,keymap_config
+ 589 0188 0E94 0000 		call eeconfig_write_keymap
+ 590               	.LVL48:
+  96:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_0)) { default_layer |= (1<<0); }
+ 591               		.loc 1 96 5 view .LVU148
+  97:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_1)) { default_layer |= (1<<1); }
+ 592               		.loc 1 97 5 view .LVU149
+  97:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_1)) { default_layer |= (1<<1); }
+ 593               		.loc 1 97 9 is_stmt 0 view .LVU150
+ 594 018c 87E2      		ldi r24,lo8(39)
+ 595 018e 90E0      		ldi r25,0
+ 596 0190 0E94 0000 		call bootmagic_scan_key
+ 597               	.LVL49:
+ 598 0194 8983      		std Y+1,r24
+ 599               	.LVL50:
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 600               		.loc 1 98 5 is_stmt 1 view .LVU151
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 601               		.loc 1 98 9 is_stmt 0 view .LVU152
+ 602 0196 8EE1      		ldi r24,lo8(30)
+ 603 0198 90E0      		ldi r25,0
+ 604               	.LVL51:
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 605               		.loc 1 98 9 view .LVU153
+ 606 019a 0E94 0000 		call bootmagic_scan_key
+ 607               	.LVL52:
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 608               		.loc 1 98 8 view .LVU154
+ 609 019e 8823      		tst r24
+ 610 01a0 01F0      		breq .L38
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 611               		.loc 1 98 62 is_stmt 1 discriminator 1 view .LVU155
+  98:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_2)) { default_layer |= (1<<2); }
+ 612               		.loc 1 98 76 is_stmt 0 discriminator 1 view .LVU156
+ 613 01a2 A981      		ldd r26,Y+1
+ 614 01a4 A260      		ori r26,lo8(2)
+ 615 01a6 A983      		std Y+1,r26
+ 616               	.LVL53:
+ 617               	.L38:
+  99:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_3)) { default_layer |= (1<<3); }
+ 618               		.loc 1 99 5 is_stmt 1 view .LVU157
+  99:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_3)) { default_layer |= (1<<3); }
+ 619               		.loc 1 99 9 is_stmt 0 view .LVU158
+ 620 01a8 8FE1      		ldi r24,lo8(31)
+ 621 01aa 90E0      		ldi r25,0
+ 622 01ac 0E94 0000 		call bootmagic_scan_key
+ 623               	.LVL54:
+  99:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_3)) { default_layer |= (1<<3); }
+ 624               		.loc 1 99 8 view .LVU159
+ 625 01b0 8823      		tst r24
+ 626 01b2 01F0      		breq .L39
+  99:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_3)) { default_layer |= (1<<3); }
+ 627               		.loc 1 99 62 is_stmt 1 discriminator 1 view .LVU160
+  99:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_3)) { default_layer |= (1<<3); }
+ 628               		.loc 1 99 76 is_stmt 0 discriminator 1 view .LVU161
+ 629 01b4 B981      		ldd r27,Y+1
+ 630 01b6 B460      		ori r27,lo8(4)
+ 631 01b8 B983      		std Y+1,r27
+ 632               	.LVL55:
+ 633               	.L39:
+ 100:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_4)) { default_layer |= (1<<4); }
+ 634               		.loc 1 100 5 is_stmt 1 view .LVU162
+ 100:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_4)) { default_layer |= (1<<4); }
+ 635               		.loc 1 100 9 is_stmt 0 view .LVU163
+ 636 01ba 80E2      		ldi r24,lo8(32)
+ 637 01bc 90E0      		ldi r25,0
+ 638 01be 0E94 0000 		call bootmagic_scan_key
+ 639               	.LVL56:
+ 100:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_4)) { default_layer |= (1<<4); }
+ 640               		.loc 1 100 8 view .LVU164
+ 641 01c2 8823      		tst r24
+ 642 01c4 01F0      		breq .L40
+ 100:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_4)) { default_layer |= (1<<4); }
+ 643               		.loc 1 100 62 is_stmt 1 discriminator 1 view .LVU165
+ 100:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_4)) { default_layer |= (1<<4); }
+ 644               		.loc 1 100 76 is_stmt 0 discriminator 1 view .LVU166
+ 645 01c6 2981      		ldd r18,Y+1
+ 646 01c8 2860      		ori r18,lo8(8)
+ 647 01ca 2983      		std Y+1,r18
+ 648               	.LVL57:
+ 649               	.L40:
+ 101:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_5)) { default_layer |= (1<<5); }
+ 650               		.loc 1 101 5 is_stmt 1 view .LVU167
+ 101:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_5)) { default_layer |= (1<<5); }
+ 651               		.loc 1 101 9 is_stmt 0 view .LVU168
+ 652 01cc 81E2      		ldi r24,lo8(33)
+ 653 01ce 90E0      		ldi r25,0
+ 654 01d0 0E94 0000 		call bootmagic_scan_key
+ 655               	.LVL58:
+ 101:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_5)) { default_layer |= (1<<5); }
+ 656               		.loc 1 101 8 view .LVU169
+ 657 01d4 8823      		tst r24
+ 658 01d6 01F0      		breq .L41
+ 101:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_5)) { default_layer |= (1<<5); }
+ 659               		.loc 1 101 62 is_stmt 1 discriminator 1 view .LVU170
+ 101:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_5)) { default_layer |= (1<<5); }
+ 660               		.loc 1 101 76 is_stmt 0 discriminator 1 view .LVU171
+ 661 01d8 3981      		ldd r19,Y+1
+ 662 01da 3061      		ori r19,lo8(16)
+ 663 01dc 3983      		std Y+1,r19
+ 664               	.LVL59:
+ 665               	.L41:
+ 102:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_6)) { default_layer |= (1<<6); }
+ 666               		.loc 1 102 5 is_stmt 1 view .LVU172
+ 102:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_6)) { default_layer |= (1<<6); }
+ 667               		.loc 1 102 9 is_stmt 0 view .LVU173
+ 668 01de 82E2      		ldi r24,lo8(34)
+ 669 01e0 90E0      		ldi r25,0
+ 670 01e2 0E94 0000 		call bootmagic_scan_key
+ 671               	.LVL60:
+ 102:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_6)) { default_layer |= (1<<6); }
+ 672               		.loc 1 102 8 view .LVU174
+ 673 01e6 8823      		tst r24
+ 674 01e8 01F0      		breq .L42
+ 102:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_6)) { default_layer |= (1<<6); }
+ 675               		.loc 1 102 62 is_stmt 1 discriminator 1 view .LVU175
+ 102:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_6)) { default_layer |= (1<<6); }
+ 676               		.loc 1 102 76 is_stmt 0 discriminator 1 view .LVU176
+ 677 01ea 4981      		ldd r20,Y+1
+ 678 01ec 4062      		ori r20,lo8(32)
+ 679 01ee 4983      		std Y+1,r20
+ 680               	.LVL61:
+ 681               	.L42:
+ 103:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_7)) { default_layer |= (1<<7); }
+ 682               		.loc 1 103 5 is_stmt 1 view .LVU177
+ 103:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_7)) { default_layer |= (1<<7); }
+ 683               		.loc 1 103 9 is_stmt 0 view .LVU178
+ 684 01f0 83E2      		ldi r24,lo8(35)
+ 685 01f2 90E0      		ldi r25,0
+ 686 01f4 0E94 0000 		call bootmagic_scan_key
+ 687               	.LVL62:
+ 103:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_7)) { default_layer |= (1<<7); }
+ 688               		.loc 1 103 8 view .LVU179
+ 689 01f8 8823      		tst r24
+ 690 01fa 01F0      		breq .L43
+ 103:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_7)) { default_layer |= (1<<7); }
+ 691               		.loc 1 103 62 is_stmt 1 discriminator 1 view .LVU180
+ 103:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (bootmagic_scan_key(BOOTMAGIC_KEY_DEFAULT_LAYER_7)) { default_layer |= (1<<7); }
+ 692               		.loc 1 103 76 is_stmt 0 discriminator 1 view .LVU181
+ 693 01fc 5981      		ldd r21,Y+1
+ 694 01fe 5064      		ori r21,lo8(64)
+ 695 0200 5983      		std Y+1,r21
+ 696               	.LVL63:
+ 697               	.L43:
+ 104:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (default_layer) {
+ 698               		.loc 1 104 5 is_stmt 1 view .LVU182
+ 104:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (default_layer) {
+ 699               		.loc 1 104 9 is_stmt 0 view .LVU183
+ 700 0202 84E2      		ldi r24,lo8(36)
+ 701 0204 90E0      		ldi r25,0
+ 702 0206 0E94 0000 		call bootmagic_scan_key
+ 703               	.LVL64:
+ 104:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (default_layer) {
+ 704               		.loc 1 104 8 view .LVU184
+ 705 020a 8823      		tst r24
+ 706 020c 01F4      		brne .+2
+ 707 020e 00C0      		rjmp .L44
+ 104:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (default_layer) {
+ 708               		.loc 1 104 62 is_stmt 1 discriminator 1 view .LVU185
+ 104:./tmk_keyboard/tmk_core/common/bootmagic.c ****     if (default_layer) {
+ 709               		.loc 1 104 76 is_stmt 0 discriminator 1 view .LVU186
+ 710 0210 8981      		ldd r24,Y+1
+ 711 0212 8068      		ori r24,lo8(-128)
+ 712 0214 8983      		std Y+1,r24
+ 713               	.LVL65:
+ 105:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_write_default_layer(default_layer);
+ 714               		.loc 1 105 5 is_stmt 1 discriminator 1 view .LVU187
+ 715               	.L45:
+ 106:./tmk_keyboard/tmk_core/common/bootmagic.c ****         default_layer_set((uint32_t)default_layer);
+ 716               		.loc 1 106 9 view .LVU188
+ 717 0216 8981      		ldd r24,Y+1
+ 718 0218 0E94 0000 		call eeconfig_write_default_layer
+ 719               	.LVL66:
+ 107:./tmk_keyboard/tmk_core/common/bootmagic.c ****     } else {
+ 720               		.loc 1 107 9 view .LVU189
+ 721 021c 3981      		ldd r19,Y+1
+ 722 021e 232F      		mov r18,r19
+ 723               	.LVL67:
+ 724               	.L99:
+ 110:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 725               		.loc 1 110 9 is_stmt 0 view .LVU190
+ 726 0220 30E0      		ldi r19,0
+ 727 0222 50E0      		ldi r21,0
+ 728 0224 40E0      		ldi r20,0
+ 729 0226 2983      		std Y+1,r18
+ 730 0228 3A83      		std Y+2,r19
+ 731 022a 4B83      		std Y+3,r20
+ 732 022c 5C83      		std Y+4,r21
+ 733 022e CA01      		movw r24,r20
+ 734 0230 B901      		movw r22,r18
+ 735               	/* epilogue start */
+ 112:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 736               		.loc 1 112 1 view .LVU191
+ 737 0232 0F90      		pop __tmp_reg__
+ 738 0234 0F90      		pop __tmp_reg__
+ 739 0236 0F90      		pop __tmp_reg__
+ 740 0238 0F90      		pop __tmp_reg__
+ 741 023a DF91      		pop r29
+ 742 023c CF91      		pop r28
+ 110:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 743               		.loc 1 110 9 view .LVU192
+ 744 023e 0C94 0000 		jmp default_layer_set
+ 745               	.LVL68:
+ 746               	.L22:
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 747               		.loc 1 27 22 is_stmt 1 discriminator 2 view .LVU193
+ 748 0242 0E94 0000 		call matrix_scan
+ 749               	.LVL69:
+  27:./tmk_keyboard/tmk_core/common/bootmagic.c ****     print("done.\n");
+ 750               		.loc 1 27 37 discriminator 2 view .LVU194
+ 751               	.LBB18:
+ 752               	.LBI18:
+ 753               		.file 2 "/usr/avr/include/util/delay.h"
+   1:/usr/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/avr/include/util/delay.h **** 
+   6:/usr/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/avr/include/util/delay.h **** 
+   9:/usr/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/avr/include/util/delay.h **** 
+  12:/usr/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/avr/include/util/delay.h ****      distribution.
+  16:/usr/avr/include/util/delay.h **** 
+  17:/usr/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/avr/include/util/delay.h **** 
+  21:/usr/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/avr/include/util/delay.h **** 
+  33:/usr/avr/include/util/delay.h **** /* $Id: delay.h.in 2506 2016-02-08 10:05:45Z joerg_wunsch $ */
+  34:/usr/avr/include/util/delay.h **** 
+  35:/usr/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/avr/include/util/delay.h **** 
+  38:/usr/avr/include/util/delay.h **** #ifndef __DOXYGEN__
+  39:/usr/avr/include/util/delay.h **** #  ifndef __HAS_DELAY_CYCLES
+  40:/usr/avr/include/util/delay.h **** #    define __HAS_DELAY_CYCLES 1
+  41:/usr/avr/include/util/delay.h **** #  endif
+  42:/usr/avr/include/util/delay.h **** #endif  /* __DOXYGEN__ */
+  43:/usr/avr/include/util/delay.h **** 
+  44:/usr/avr/include/util/delay.h **** #include <inttypes.h>
+  45:/usr/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  46:/usr/avr/include/util/delay.h **** #include <math.h>
+  47:/usr/avr/include/util/delay.h **** 
+  48:/usr/avr/include/util/delay.h **** /** \file */
+  49:/usr/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  50:/usr/avr/include/util/delay.h ****     \code
+  51:/usr/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  52:/usr/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  53:/usr/avr/include/util/delay.h ****     #include <util/delay.h>
+  54:/usr/avr/include/util/delay.h ****     \endcode
+  55:/usr/avr/include/util/delay.h **** 
+  56:/usr/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  57:/usr/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  58:/usr/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  59:/usr/avr/include/util/delay.h ****     used.
+  60:/usr/avr/include/util/delay.h **** 
+  61:/usr/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  62:/usr/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  63:/usr/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  64:/usr/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  65:/usr/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  66:/usr/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  67:/usr/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  68:/usr/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  69:/usr/avr/include/util/delay.h **** 
+  70:/usr/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  71:/usr/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  72:/usr/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  73:/usr/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  74:/usr/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  75:/usr/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  76:/usr/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  77:/usr/avr/include/util/delay.h ****     routines linked into the application.
+  78:/usr/avr/include/util/delay.h **** 
+  79:/usr/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  80:/usr/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  81:/usr/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  82:/usr/avr/include/util/delay.h **** 
+  83:/usr/avr/include/util/delay.h **** */
+  84:/usr/avr/include/util/delay.h **** 
+  85:/usr/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  86:/usr/avr/include/util/delay.h **** static __inline__ void _delay_us(double __us) __attribute__((__always_inline__));
+  87:/usr/avr/include/util/delay.h **** static __inline__ void _delay_ms(double __ms) __attribute__((__always_inline__));
+  88:/usr/avr/include/util/delay.h **** #endif
+  89:/usr/avr/include/util/delay.h **** 
+  90:/usr/avr/include/util/delay.h **** #ifndef F_CPU
+  91:/usr/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  92:/usr/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  93:/usr/avr/include/util/delay.h **** /** \ingroup util_delay
+  94:/usr/avr/include/util/delay.h ****     \def F_CPU
+  95:/usr/avr/include/util/delay.h ****     \brief CPU frequency in Hz
+  96:/usr/avr/include/util/delay.h **** 
+  97:/usr/avr/include/util/delay.h ****     The macro F_CPU specifies the CPU frequency to be considered by
+  98:/usr/avr/include/util/delay.h ****     the delay macros.  This macro is normally supplied by the
+  99:/usr/avr/include/util/delay.h ****     environment (e.g. from within a project header, or the project's
+ 100:/usr/avr/include/util/delay.h ****     Makefile).  The value 1 MHz here is only provided as a "vanilla"
+ 101:/usr/avr/include/util/delay.h ****     fallback if no such user-provided definition could be found.
+ 102:/usr/avr/include/util/delay.h **** 
+ 103:/usr/avr/include/util/delay.h ****     In terms of the delay functions, the CPU frequency can be given as
+ 104:/usr/avr/include/util/delay.h ****     a floating-point constant (e.g. 3.6864E6 for 3.6864 MHz).
+ 105:/usr/avr/include/util/delay.h ****     However, the macros in <util/setbaud.h> require it to be an
+ 106:/usr/avr/include/util/delay.h ****     integer value.
+ 107:/usr/avr/include/util/delay.h ****  */
+ 108:/usr/avr/include/util/delay.h **** # define F_CPU 1000000UL
+ 109:/usr/avr/include/util/delay.h **** #endif
+ 110:/usr/avr/include/util/delay.h **** 
+ 111:/usr/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+ 112:/usr/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+ 113:/usr/avr/include/util/delay.h **** #endif
+ 114:/usr/avr/include/util/delay.h **** 
+ 115:/usr/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 116:/usr/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 117:/usr/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 118:/usr/avr/include/util/delay.h **** #  include <math.h>
+ 119:/usr/avr/include/util/delay.h **** #endif
+ 120:/usr/avr/include/util/delay.h **** 
+ 121:/usr/avr/include/util/delay.h **** /**
+ 122:/usr/avr/include/util/delay.h ****    \ingroup util_delay
+ 123:/usr/avr/include/util/delay.h **** 
+ 124:/usr/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 125:/usr/avr/include/util/delay.h **** 
+ 126:/usr/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 127:/usr/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 128:/usr/avr/include/util/delay.h **** 
+ 129:/usr/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 130:/usr/avr/include/util/delay.h **** 
+ 131:/usr/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 132:/usr/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 133:/usr/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 134:/usr/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 135:/usr/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 136:/usr/avr/include/util/delay.h **** 
+ 137:/usr/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles()
+ 138:/usr/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 139:/usr/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 140:/usr/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 141:/usr/avr/include/util/delay.h **** 
+ 142:/usr/avr/include/util/delay.h ****    Conversion of \c __ms into clock cycles may not always result in
+ 143:/usr/avr/include/util/delay.h ****    integer.  By default, the clock cycles rounded up to next
+ 144:/usr/avr/include/util/delay.h ****    integer. This ensures that the user gets at least \c __ms
+ 145:/usr/avr/include/util/delay.h ****    microseconds of delay.
+ 146:/usr/avr/include/util/delay.h **** 
+ 147:/usr/avr/include/util/delay.h ****    Alternatively, by defining the macro \c __DELAY_ROUND_DOWN__, or
+ 148:/usr/avr/include/util/delay.h ****    \c __DELAY_ROUND_CLOSEST__, before including this header file, the
+ 149:/usr/avr/include/util/delay.h ****    algorithm can be made to round down, or round to closest integer,
+ 150:/usr/avr/include/util/delay.h ****    respectively.
+ 151:/usr/avr/include/util/delay.h **** 
+ 152:/usr/avr/include/util/delay.h ****    \note
+ 153:/usr/avr/include/util/delay.h **** 
+ 154:/usr/avr/include/util/delay.h ****    The implementation of _delay_ms() based on
+ 155:/usr/avr/include/util/delay.h ****    __builtin_avr_delay_cycles() is not backward compatible with older
+ 156:/usr/avr/include/util/delay.h ****    implementations.  In order to get functionality backward compatible
+ 157:/usr/avr/include/util/delay.h ****    with previous versions, the macro \c "__DELAY_BACKWARD_COMPATIBLE__"
+ 158:/usr/avr/include/util/delay.h ****    must be defined before including this header file. Also, the
+ 159:/usr/avr/include/util/delay.h ****    backward compatible algorithm will be chosen if the code is
+ 160:/usr/avr/include/util/delay.h ****    compiled in a <em>freestanding environment</em> (GCC option
+ 161:/usr/avr/include/util/delay.h ****    \c -ffreestanding), as the math functions required for rounding are
+ 162:/usr/avr/include/util/delay.h ****    not available to the compiler then.
+ 163:/usr/avr/include/util/delay.h **** 
+ 164:/usr/avr/include/util/delay.h ****  */
+ 165:/usr/avr/include/util/delay.h **** void
+ 166:/usr/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 754               		.loc 2 166 1 discriminator 2 view .LVU195
+ 755               	.LBB19:
+ 167:/usr/avr/include/util/delay.h **** {
+ 168:/usr/avr/include/util/delay.h **** 	double __tmp ;
+ 756               		.loc 2 168 2 discriminator 2 view .LVU196
+ 169:/usr/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 170:/usr/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 171:/usr/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 172:/usr/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 757               		.loc 2 172 2 discriminator 2 view .LVU197
+ 173:/usr/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 758               		.loc 2 173 2 discriminator 2 view .LVU198
+ 174:/usr/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 759               		.loc 2 174 2 discriminator 2 view .LVU199
+ 175:/usr/avr/include/util/delay.h **** 
+ 176:/usr/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 177:/usr/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 178:/usr/avr/include/util/delay.h **** 
+ 179:/usr/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 180:/usr/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 181:/usr/avr/include/util/delay.h **** 
+ 182:/usr/avr/include/util/delay.h **** 	#else
+ 183:/usr/avr/include/util/delay.h **** 		//round up by default
+ 184:/usr/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 760               		.loc 2 184 3 discriminator 2 view .LVU200
+ 185:/usr/avr/include/util/delay.h **** 	#endif
+ 186:/usr/avr/include/util/delay.h **** 
+ 187:/usr/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 761               		.loc 2 187 2 discriminator 2 view .LVU201
+ 762 0246 8FE3      		ldi r24,lo8(-25537)
+ 763 0248 9CE9      		ldi r25,hi8(-25537)
+ 764 024a 0197      	1:	sbiw r24,1
+ 765 024c 01F4      		brne 1b
+ 766 024e 00C0      		rjmp .
+ 767 0250 0000      		nop
+ 188:/usr/avr/include/util/delay.h **** 
+ 189:/usr/avr/include/util/delay.h **** #else
+ 190:/usr/avr/include/util/delay.h **** 	uint16_t __ticks;
+ 191:/usr/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 4e3) * __ms;
+ 192:/usr/avr/include/util/delay.h **** 	if (__tmp < 1.0)
+ 193:/usr/avr/include/util/delay.h **** 		__ticks = 1;
+ 194:/usr/avr/include/util/delay.h **** 	else if (__tmp > 65535)
+ 195:/usr/avr/include/util/delay.h **** 	{
+ 196:/usr/avr/include/util/delay.h **** 		//	__ticks = requested delay in 1/10 ms
+ 197:/usr/avr/include/util/delay.h **** 		__ticks = (uint16_t) (__ms * 10.0);
+ 198:/usr/avr/include/util/delay.h **** 		while(__ticks)
+ 199:/usr/avr/include/util/delay.h **** 		{
+ 200:/usr/avr/include/util/delay.h **** 			// wait 1/10 ms
+ 201:/usr/avr/include/util/delay.h **** 			_delay_loop_2(((F_CPU) / 4e3) / 10);
+ 202:/usr/avr/include/util/delay.h **** 			__ticks --;
+ 203:/usr/avr/include/util/delay.h **** 		}
+ 204:/usr/avr/include/util/delay.h **** 		return;
+ 205:/usr/avr/include/util/delay.h **** 	}
+ 206:/usr/avr/include/util/delay.h **** 	else
+ 207:/usr/avr/include/util/delay.h **** 		__ticks = (uint16_t)__tmp;
+ 208:/usr/avr/include/util/delay.h **** 	_delay_loop_2(__ticks);
+ 209:/usr/avr/include/util/delay.h **** #endif
+ 210:/usr/avr/include/util/delay.h **** }
+ 768               		.loc 2 210 1 is_stmt 0 discriminator 2 view .LVU202
+ 769 0252 00C0      		rjmp .L21
+ 770               	.LVL70:
+ 771               	.L27:
+ 772               		.loc 2 210 1 discriminator 2 view .LVU203
+ 773               	.LBE19:
+ 774               	.LBE18:
+  53:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.keyboard = !debug_config.keyboard;
+ 775               		.loc 1 53 16 is_stmt 1 view .LVU204
+  53:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.keyboard = !debug_config.keyboard;
+ 776               		.loc 1 53 20 is_stmt 0 view .LVU205
+ 777 0254 8EE0      		ldi r24,lo8(14)
+ 778 0256 90E0      		ldi r25,0
+ 779 0258 0E94 0000 		call bootmagic_scan_key
+ 780               	.LVL71:
+  53:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.keyboard = !debug_config.keyboard;
+ 781               		.loc 1 53 19 view .LVU206
+ 782 025c 8823      		tst r24
+ 783 025e 01F0      		breq .L28
+  54:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MOUSE)) {
+ 784               		.loc 1 54 13 is_stmt 1 view .LVU207
+  54:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MOUSE)) {
+ 785               		.loc 1 54 50 is_stmt 0 view .LVU208
+ 786 0260 9091 0000 		lds r25,debug_config
+  54:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else if (bootmagic_scan_key(BOOTMAGIC_KEY_DEBUG_MOUSE)) {
+ 787               		.loc 1 54 35 view .LVU209
+ 788 0264 892F      		mov r24,r25
+ 789 0266 8B7F      		andi r24,~(1<<2)
+ 790 0268 92FF      		sbrs r25,2
+ 791 026a 8460      		ori r24,1<<2
+ 792 026c 00C0      		rjmp .L98
+ 793               	.L28:
+  55:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.mouse = !debug_config.mouse;
+ 794               		.loc 1 55 16 is_stmt 1 view .LVU210
+  55:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.mouse = !debug_config.mouse;
+ 795               		.loc 1 55 20 is_stmt 0 view .LVU211
+ 796 026e 80E1      		ldi r24,lo8(16)
+ 797 0270 90E0      		ldi r25,0
+ 798 0272 0E94 0000 		call bootmagic_scan_key
+ 799               	.LVL72:
+ 800 0276 9091 0000 		lds r25,debug_config
+  55:./tmk_keyboard/tmk_core/common/bootmagic.c ****             debug_config.mouse = !debug_config.mouse;
+ 801               		.loc 1 55 19 view .LVU212
+ 802 027a 8823      		tst r24
+ 803 027c 01F0      		breq .L29
+  56:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else {
+ 804               		.loc 1 56 13 is_stmt 1 view .LVU213
+  56:./tmk_keyboard/tmk_core/common/bootmagic.c ****         } else {
+ 805               		.loc 1 56 32 is_stmt 0 view .LVU214
+ 806 027e 892F      		mov r24,r25
+ 807 0280 877F      		andi r24,~(1<<3)
+ 808 0282 93FF      		sbrs r25,3
+ 809 0284 8860      		ori r24,1<<3
+ 810 0286 00C0      		rjmp .L98
+ 811               	.L29:
+  58:./tmk_keyboard/tmk_core/common/bootmagic.c ****         }
+ 812               		.loc 1 58 13 is_stmt 1 view .LVU215
+  58:./tmk_keyboard/tmk_core/common/bootmagic.c ****         }
+ 813               		.loc 1 58 33 is_stmt 0 view .LVU216
+ 814 0288 892F      		mov r24,r25
+ 815 028a 8E7F      		andi r24,~(1<<0)
+ 816 028c 90FF      		sbrs r25,0
+ 817 028e 8160      		ori r24,1<<0
+ 818 0290 00C0      		rjmp .L98
+ 819               	.LVL73:
+ 820               	.L44:
+ 105:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_write_default_layer(default_layer);
+ 821               		.loc 1 105 5 is_stmt 1 view .LVU217
+ 105:./tmk_keyboard/tmk_core/common/bootmagic.c ****         eeconfig_write_default_layer(default_layer);
+ 822               		.loc 1 105 8 is_stmt 0 view .LVU218
+ 823 0292 9981      		ldd r25,Y+1
+ 824 0294 9111      		cpse r25,__zero_reg__
+ 825 0296 00C0      		rjmp .L45
+ 109:./tmk_keyboard/tmk_core/common/bootmagic.c ****         default_layer_set((uint32_t)default_layer);
+ 826               		.loc 1 109 9 is_stmt 1 view .LVU219
+ 109:./tmk_keyboard/tmk_core/common/bootmagic.c ****         default_layer_set((uint32_t)default_layer);
+ 827               		.loc 1 109 25 is_stmt 0 view .LVU220
+ 828 0298 0E94 0000 		call eeconfig_read_default_layer
+ 829               	.LVL74:
+ 110:./tmk_keyboard/tmk_core/common/bootmagic.c ****     }
+ 830               		.loc 1 110 9 is_stmt 1 view .LVU221
+ 831 029c 282F      		mov r18,r24
+ 832 029e 00C0      		rjmp .L99
+ 833               	.LVL75:
+ 834               	.L19:
+ 835               	/* epilogue start */
+ 112:./tmk_keyboard/tmk_core/common/bootmagic.c **** 
+ 836               		.loc 1 112 1 is_stmt 0 view .LVU222
+ 837 02a0 0F90      		pop __tmp_reg__
+ 838 02a2 0F90      		pop __tmp_reg__
+ 839 02a4 0F90      		pop __tmp_reg__
+ 840 02a6 0F90      		pop __tmp_reg__
+ 841 02a8 DF91      		pop r29
+ 842 02aa CF91      		pop r28
+ 843 02ac 0895      		ret
+ 844               		.cfi_endproc
+ 845               	.LFE10:
+ 847               		.section	.progmem.data.__c.0,"a"
+ 850               	__c.0:
+ 851 0000 646F 6E65 		.string	"done.\n"
+ 851      2E0A 00
+ 852               		.section	.progmem.data.__c.1,"a"
+ 855               	__c.1:
+ 856 0000 626F 6F74 		.string	"bootmagic scan: ... "
+ 856      6D61 6769 
+ 856      6320 7363 
+ 856      616E 3A20 
+ 856      2E2E 2E20 
+ 857               	.global	keymap_config
+ 858               		.section	.bss.keymap_config,"aw",@nobits
+ 861               	keymap_config:
+ 862 0000 00        		.zero	1
+ 863               		.text
+ 864               	.Letext0:
+ 865               		.file 3 "/usr/avr/include/stdint.h"
+ 866               		.file 4 "./tmk_keyboard/tmk_core/common/matrix.h"
+ 867               		.file 5 "./tmk_keyboard/tmk_core/common/debug.h"
+ 868               		.file 6 "./tmk_keyboard/tmk_core/common/keyboard.h"
+ 869               		.file 7 "./tmk_keyboard/tmk_core/common/keycode.h"
+ 870               		.file 8 "./tmk_keyboard/tmk_core/common/action_code.h"
+ 871               		.file 9 "./tmk_keyboard/tmk_core/common/keymap.h"
+ 872               		.file 10 "./tmk_keyboard/tmk_core/common/action.h"
+ 873               		.file 11 "/usr/avr/include/math.h"
+ 874               		.file 12 "./tmk_keyboard/tmk_core/common/action_layer.h"
+ 875               		.file 13 "./tmk_keyboard/tmk_core/common/eeconfig.h"
+ 876               		.file 14 "./tmk_keyboard/tmk_core/common/hook.h"
+ 877               		.file 15 "./tmk_keyboard/tmk_core/common/bootloader.h"
+ 878               		.file 16 "./tmk_keyboard/tmk_core/common/avr/xprintf.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 bootmagic.c
+     /tmp/ccRdjXaF.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccRdjXaF.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccRdjXaF.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccRdjXaF.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/ccRdjXaF.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccRdjXaF.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccRdjXaF.s:13     .text.scan_key:0000000000000000 scan_key
+     /tmp/ccRdjXaF.s:227    .text.bootmagic_scan_key:0000000000000000 bootmagic_scan_key
+     /tmp/ccRdjXaF.s:282    .text.bootmagic:0000000000000000 bootmagic
+     /tmp/ccRdjXaF.s:855    .progmem.data.__c.1:0000000000000000 __c.1
+     /tmp/ccRdjXaF.s:850    .progmem.data.__c.0:0000000000000000 __c.0
+     /tmp/ccRdjXaF.s:861    .bss.keymap_config:0000000000000000 keymap_config
+
+UNDEFINED SYMBOLS
+matrix_get_row
+action_for_key
+eeconfig_is_enabled
+eeconfig_init
+xputs
+bootloader_jump
+hook_bootmagic
+eeconfig_read_debug
+debug_config
+eeconfig_write_debug
+eeconfig_read_keymap
+eeconfig_write_keymap
+eeconfig_write_default_layer
+default_layer_set
+matrix_scan
+eeconfig_read_default_layer
+__do_clear_bss

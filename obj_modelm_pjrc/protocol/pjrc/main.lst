@@ -1,0 +1,202 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  10               		.cfi_sections	.debug_frame
+  11               		.section	.text.startup.main,"ax",@progbits
+  12               	.global	main
+  14               	main:
+  15               	.LFB12:
+  16               		.file 1 "./tmk_keyboard/tmk_core/protocol/pjrc/main.c"
+   1:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** /* Keyboard example with debug channel, for Teensy USB Development Board
+   2:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * http://www.pjrc.com/teensy/usb_keyboard.html
+   3:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * Copyright (c) 2008 PJRC.COM, LLC
+   4:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * 
+   5:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * of this software and associated documentation files (the "Software"), to deal
+   7:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * in the Software without restriction, including without limitation the rights
+   8:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * copies of the Software, and to permit persons to whom the Software is
+  10:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * furnished to do so, subject to the following conditions:
+  11:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * 
+  12:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * The above copyright notice and this permission notice shall be included in
+  13:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * all copies or substantial portions of the Software.
+  14:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * 
+  15:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  * THE SOFTWARE.
+  22:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****  */
+  23:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  24:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include <stdbool.h>
+  25:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include <avr/io.h>
+  26:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include <avr/interrupt.h>
+  27:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include <avr/wdt.h>
+  28:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include <util/delay.h>
+  29:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "keyboard.h"
+  30:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "usb.h"
+  31:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "matrix.h"
+  32:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "print.h"
+  33:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "debug.h"
+  34:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "sendchar.h"
+  35:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "util.h"
+  36:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "suspend.h"
+  37:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "host.h"
+  38:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #include "pjrc.h"
+  39:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  40:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  41:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #define CPU_PRESCALE(n)    (CLKPR = 0x80, CLKPR = (n))
+  42:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  43:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  44:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** int main(void)
+  45:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** {
+  17               		.loc 1 45 1 view -0
+  18               		.cfi_startproc
+  19               	/* prologue: function */
+  20               	/* frame size = 0 */
+  21               	/* stack size = 0 */
+  22               	.L__stack_usage = 0
+  46:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     // set for 16 MHz clock
+  47:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     CPU_PRESCALE(0);
+  23               		.loc 1 47 5 view .LVU1
+  24 0000 80E8      		ldi r24,lo8(-128)
+  25 0002 8093 6100 		sts 97,r24
+  26 0006 1092 6100 		sts 97,__zero_reg__
+  48:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  49:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     keyboard_setup();
+  27               		.loc 1 49 5 view .LVU2
+  28 000a 0E94 0000 		call keyboard_setup
+  29               	.LVL0:
+  50:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  51:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     // Initialize the USB, and then wait for the host to set configuration.
+  52:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     // If the Teensy is powered without a PC connected to the USB port,
+  53:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     // this will wait forever.
+  54:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     usb_init();
+  30               		.loc 1 54 5 view .LVU3
+  31 000e 0E94 0000 		call usb_init
+  32               	.LVL1:
+  55:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     while (!usb_configured()) /* wait */ ;
+  33               		.loc 1 55 5 view .LVU4
+  34               	.L2:
+  35               		.loc 1 55 12 discriminator 1 view .LVU5
+  36               		.loc 1 55 13 is_stmt 0 discriminator 1 view .LVU6
+  37 0012 0E94 0000 		call usb_configured
+  38               	.LVL2:
+  39               		.loc 1 55 12 discriminator 1 view .LVU7
+  40 0016 8823      		tst r24
+  41 0018 01F0      		breq .L2
+  56:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  57:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     print_set_sendchar(sendchar);
+  42               		.loc 1 57 5 is_stmt 1 view .LVU8
+  43 001a 80E0      		ldi r24,lo8(gs(sendchar))
+  44 001c 90E0      		ldi r25,hi8(gs(sendchar))
+  45 001e 0E94 0000 		call print_set_sendchar
+  46               	.LVL3:
+  58:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  59:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     keyboard_init();
+  47               		.loc 1 59 5 view .LVU9
+  48 0022 0E94 0000 		call keyboard_init
+  49               	.LVL4:
+  60:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     host_set_driver(pjrc_driver());
+  50               		.loc 1 60 5 view .LVU10
+  51 0026 0E94 0000 		call pjrc_driver
+  52               	.LVL5:
+  53 002a 0E94 0000 		call host_set_driver
+  54               	.LVL6:
+  55               	.L3:
+  61:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #ifdef SLEEP_LED_ENABLE
+  62:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     sleep_led_init();
+  63:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** #endif
+  64:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****     while (1) {
+  65:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****         while (suspend) {
+  56               		.loc 1 65 16 view .LVU11
+  57 002e 8091 0000 		lds r24,suspend
+  58 0032 8111      		cpse r24,__zero_reg__
+  59 0034 00C0      		rjmp .L7
+  66:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****             suspend_power_down();
+  67:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****             if (remote_wakeup && suspend_wakeup_condition()) {
+  68:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****                 usb_remote_wakeup();
+  69:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****             }
+  70:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****         }
+  71:./tmk_keyboard/tmk_core/protocol/pjrc/main.c **** 
+  72:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****         keyboard_task(); 
+  60               		.loc 1 72 9 view .LVU12
+  61 0036 0E94 0000 		call keyboard_task
+  62               	.LVL7:
+  64:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****         while (suspend) {
+  63               		.loc 1 64 11 view .LVU13
+  65:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****             suspend_power_down();
+  64               		.loc 1 65 15 is_stmt 0 view .LVU14
+  65 003a 00C0      		rjmp .L3
+  66               	.L7:
+  66:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****             suspend_power_down();
+  67               		.loc 1 66 13 is_stmt 1 view .LVU15
+  68 003c 0E94 0000 		call suspend_power_down
+  69               	.LVL8:
+  67:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****                 usb_remote_wakeup();
+  70               		.loc 1 67 13 view .LVU16
+  67:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****                 usb_remote_wakeup();
+  71               		.loc 1 67 16 is_stmt 0 view .LVU17
+  72 0040 8091 0000 		lds r24,remote_wakeup
+  73 0044 8823      		tst r24
+  74 0046 01F0      		breq .L3
+  67:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****                 usb_remote_wakeup();
+  75               		.loc 1 67 34 discriminator 1 view .LVU18
+  76 0048 0E94 0000 		call suspend_wakeup_condition
+  77               	.LVL9:
+  67:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****                 usb_remote_wakeup();
+  78               		.loc 1 67 31 discriminator 1 view .LVU19
+  79 004c 8823      		tst r24
+  80 004e 01F0      		breq .L3
+  68:./tmk_keyboard/tmk_core/protocol/pjrc/main.c ****             }
+  81               		.loc 1 68 17 is_stmt 1 view .LVU20
+  82 0050 0E94 0000 		call usb_remote_wakeup
+  83               	.LVL10:
+  84 0054 00C0      		rjmp .L3
+  85               		.cfi_endproc
+  86               	.LFE12:
+  88               		.text
+  89               	.Letext0:
+  90               		.file 2 "/usr/avr/include/stdint.h"
+  91               		.file 3 "./tmk_keyboard/tmk_core/protocol/pjrc/usb.h"
+  92               		.file 4 "./tmk_keyboard/tmk_core/common/report.h"
+  93               		.file 5 "./tmk_keyboard/tmk_core/common/host_driver.h"
+  94               		.file 6 "./tmk_keyboard/tmk_core/common/keyboard.h"
+  95               		.file 7 "./tmk_keyboard/tmk_core/common/suspend.h"
+  96               		.file 8 "./tmk_keyboard/tmk_core/protocol/pjrc/pjrc.h"
+  97               		.file 9 "./tmk_keyboard/tmk_core/common/host.h"
+  98               		.file 10 "./tmk_keyboard/tmk_core/common/print.h"
+  99               		.file 11 "./tmk_keyboard/tmk_core/common/sendchar.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/ccRVhseX.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccRVhseX.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccRVhseX.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccRVhseX.s:5      *ABS*:000000000000003b __RAMPZ__
+     /tmp/ccRVhseX.s:6      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccRVhseX.s:7      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccRVhseX.s:14     .text.startup.main:0000000000000000 main
+
+UNDEFINED SYMBOLS
+keyboard_setup
+usb_init
+usb_configured
+sendchar
+print_set_sendchar
+keyboard_init
+pjrc_driver
+host_set_driver
+suspend
+keyboard_task
+suspend_power_down
+remote_wakeup
+suspend_wakeup_condition
+usb_remote_wakeup
