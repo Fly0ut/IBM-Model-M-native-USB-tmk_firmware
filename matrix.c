@@ -17,8 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <avr/io.h>
 #include <util/delay.h>
+#include "ch.h"
+#include "hal.h"
 #include "print.h"
 #include "debug.h"
 #include "util.h"
@@ -213,40 +214,43 @@ matrix_row_t matrix_key_count(void)
  * pin: C7 C6 C5 C4 C3 C2 C1 C0 E1 E0 D7 D6 D5 D4 D3 D2
  */
 static void init_rows(void) {
-    // Input with pull-up(DDR:0, PORT:1)
-    //        0b76543210
-    DDRC  &= ~0b11111111; //PC: 7 6 5 4 3 2 1 0
-    PORTC |=  0b11111111; //PC: 7 6 5 4 3 2 1 0
-    //ToDo: Issues starts on row 8 and rows >=8 don't register.
-    //left ctl <-> alt, caps lock <-> ctl, back space <-> backslash
-    //F6, F7, F8, 8, 9, 0, -, + , i, o, p, {, }, k, l, ;, ', ,, ., /, all numpad, nav cluster, arrows, and above nav.
-    DDRE  &= ~(1 << 1 | 1 << 0); //PE: 1 0
-    PORTE |=  (1 << 1 | 1 << 0); //PE: 1 0
-    //DDRD  &= ~0b11111000; //PD: 7 6 5 4 3
-    //PORTD |=  0b11111000; //PD: 7 6 5 4 3
-    DDRD  &= ~(1 << 7 | 1 << 6 | 1 << 5 | 1 << 4 | 1 << 3 | 1 << 2);
-    PORTD |=  (1 << 7 | 1 << 6 | 1 << 5 | 1 << 4 | 1 << 3 | 1 << 2);
-
+    palSetPadMode(TEENSY_PIN0_IOPORT , TEENSY_PIN0,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN1_IOPORT , TEENSY_PIN1,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN2_IOPORT , TEENSY_PIN2,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN3_IOPORT , TEENSY_PIN3,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN4_IOPORT , TEENSY_PIN4,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN5_IOPORT , TEENSY_PIN5,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN6_IOPORT , TEENSY_PIN6,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN7_IOPORT , TEENSY_PIN7,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN8_IOPORT , TEENSY_PIN8,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN9_IOPORT , TEENSY_PIN9,  PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN10_IOPORT, TEENSY_PIN10, PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN11_IOPORT, TEENSY_PIN11, PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN12_IOPORT, TEENSY_PIN12, PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN14_IOPORT, TEENSY_PIN14, PAL_MODE_INPUT_PULLUP);
+    palSetPadMode(TEENSY_PIN15_IOPORT, TEENSY_PIN15, PAL_MODE_INPUT_PULLUP);
 }
+
 static matrix_row_t read_rows(void)
 {
-    return (PINC&(1<<7) ? 0 : (1<<0)) |
-           (PINC&(1<<6) ? 0 : (1<<1)) |
-           (PINC&(1<<5) ? 0 : (1<<2)) |
-           (PINC&(1<<4) ? 0 : (1<<3)) |
-           (PINC&(1<<3) ? 0 : (1<<4)) |
-           (PINC&(1<<2) ? 0 : (1<<5)) |
-          //Here is where the inputs stop.
-           (PINC&(1<<1) ? 0 : (1<<6)) |
-           (PINC&(1<<0) ? 0 : (1<<7)) |
-           (PINE&(1<<1) ? 0 : (1<<8)) |
-           (PINE&(1<<0) ? 0 : (1<<9)) |
-           (PIND&(1<<7) ? 0 : (1<<10)) |
-           (PIND&(1<<6) ? 0 : (1<<11)) |
-           (PIND&(1<<5) ? 0 : (1<<12)) |
-           (PIND&(1<<4) ? 0 : (1<<13)) |
-           (PIND&(1<<3) ? 0 : (1<<14)) |
-           (PIND&(1<<2) ? 0 : (1<<15));
+    return (
+            ((palReadPad(TEENSY_PIN0_IOPORT, TEENSY_PIN0)==PAL_HIGH) ? 0 : (1<<0)) |
+            ((palReadPad(TEENSY_PIN1_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<1)) |
+            ((palReadPad(TEENSY_PIN2_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<2)) |
+            ((palReadPad(TEENSY_PIN3_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<3)) |
+            ((palReadPad(TEENSY_PIN4_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<4)) |
+            ((palReadPad(TEENSY_PIN5_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<5)) |
+            ((palReadPad(TEENSY_PIN6_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<6)) |
+            ((palReadPad(TEENSY_PIN7_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<7)) |
+            ((palReadPad(TEENSY_PIN8_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<8)) |
+            ((palReadPad(TEENSY_PIN9_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<9)) |
+            ((palReadPad(TEENSY_PIN10_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<10)) |
+            ((palReadPad(TEENSY_PIN11_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<11)) |
+            ((palReadPad(TEENSY_PIN12_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<12)) |
+            ((palReadPad(TEENSY_PIN13_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<13)) |
+            ((palReadPad(TEENSY_PIN14_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<14)) |
+            ((palReadPad(TEENSY_PIN15_IOPORT, TEENSY_PIN1)==PAL_HIGH) ? 0 : (1<<15))
+           );
 }
 
 /* Column pin configuration
@@ -255,20 +259,14 @@ static matrix_row_t read_rows(void)
  */
 static void unselect_cols(void)
 {
-    //Hi-Z(DDR:0, PORT:0) to unselect
-    //DDRB &= ~(1<<0);
-    //PORTB &= ~(1<<0);
-    //        0b76543210
-    DDRB  &= ~0b00000001; //PB: 0
-    PORTB &= ~0b00000001; //PB: 0
-    //        0b76543210
-    DDRF  &= ~0b00011111;  //PF: 4 3 2 1 0
-    PORTF &= ~0b00011111;  //PF: 4 3 2 1 0
-    //DDRE  &= ~(1<<7 | 1<<6);  //PE: 7 6
-    //PORTE &= ~(1<<7 | 1<<6);  //PE: 7 6
-    //        0b76543210
-    DDRE  &= ~0b11000000; //PE: 7 6
-    PORTE &= ~0b11000000; //PE: 7 6
+    palSetPadMode(TEENSY_PIN16_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN17_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN18_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN19_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN20_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN21_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN22_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
+    palSetPadMode(TEENSY_PIN23_IOPORT, TEENSY_PIN5, PAL_MODE_INPUT);
 }
 
 static void select_col(matrix_col_t col)
@@ -276,36 +274,36 @@ static void select_col(matrix_col_t col)
     switch(col)
     {
         case 0:
-            DDRB  |=  (1<<0);
-            PORTB &= ~(1<<0);
+            palSetPadMode(TEENSY_PIN16_IOPORT, TEENSY_PIN16, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN16_IOPORT, TEENSY_PIN16);
             break;
         case 1:
-            DDRE  |=  (1<<7);
-            PORTE &= ~(1<<7);
+            palSetPadMode(TEENSY_PIN17_IOPORT, TEENSY_PIN17, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN17_IOPORT, TEENSY_PIN17);
             break;
         case 2:
-            DDRE  |=  (1<<6);
-            PORTE &= ~(1<<6);
+            palSetPadMode(TEENSY_PIN18_IOPORT, TEENSY_PIN18, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN18_IOPORT, TEENSY_PIN18);
             break;
         case 3:
-            DDRF  |=  (1<<0);
-            PORTF &= ~(1<<0);
+            palSetPadMode(TEENSY_PIN19_IOPORT, TEENSY_PIN19, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN19_IOPORT, TEENSY_PIN19);
             break;
         case 4:
-            DDRF  |=  (1<<1);
-            PORTF &= ~(1<<1);
+            palSetPadMode(TEENSY_PIN20_IOPORT, TEENSY_PIN20, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN20_IOPORT, TEENSY_PIN20);
             break;
         case 5:
-            DDRF  |=  (1<<2);
-            PORTF &= ~(1<<2);
+            palSetPadMode(TEENSY_PIN21_IOPORT, TEENSY_PIN21, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN21_IOPORT, TEENSY_PIN21);
             break;
         case 6:
-            DDRF  |=  (1<<3);
-            PORTF &= ~(1<<3);
+            palSetPadMode(TEENSY_PIN22_IOPORT, TEENSY_PIN22, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN22_IOPORT, TEENSY_PIN22);
             break;
         case 7:
-            DDRF  |=  (1<<4);
-            PORTF &= ~(1<<4);
+            palSetPadMode(TEENSY_PIN23_IOPORT, TEENSY_PIN23, PAL_MODE_OUTPUT_PUSHPULL);
+            palClearPad(TEENSY_PIN23_IOPORT, TEENSY_PIN23);
             break;
     }
 }

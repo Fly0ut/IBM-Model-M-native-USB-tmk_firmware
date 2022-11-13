@@ -1,108 +1,77 @@
-#----------------------------------------------------------------------------
-# On command line:
-#
-# make all = Make software.
-#
-# make clean = Clean out built project files.
-#
-# make coff = Convert ELF to AVR COFF.
-#
-# make extcoff = Convert ELF to AVR Extended COFF.
-#
-# make program = Download the hex file to the device.
-#                Please customize your programmer settings(PROGRAM_CMD)
-#
-# make teensy = Download the hex file to the device, using teensy_loader_cli.
-#               (must have teensy_loader_cli installed).
-#
-# make dfu = Download the hex file to the device, using dfu-programmer (must
-#            have dfu-programmer installed).
-#
-# make flip = Download the hex file to the device, using Atmel FLIP (must
-#             have Atmel FLIP installed).
-#
-# make dfu-ee = Download the eeprom file to the device, using dfu-programmer
-#               (must have dfu-programmer installed).
-#
-# make flip-ee = Download the eeprom file to the device, using Atmel FLIP
-#                (must have Atmel FLIP installed).
-#
-# make debug = Start either simulavr or avarice as specified for debugging, 
-#              with avr-gdb or avr-insight as the front end for debugging.
-#
-# make filename.s = Just compile filename.c into the assembler code only.
-#
-# make filename.i = Create a preprocessed source file for use in submitting
-#                   bug reports to the GCC project.
-#
-# To rebuild project do "make clean" then "make all".
-#----------------------------------------------------------------------------
-
 # Target file name (without extension).
-TARGET = modelm_pjrc
+PROJECT = ch
 
-# Directory common source filess exist
+# Directory common source files exist
 TMK_DIR = ./tmk_keyboard/tmk_core
 
 # Directory keyboard dependent files exist
 TARGET_DIR = .
 
-# keyboard dependent files
-SRC =	keymap.c \
-	matrix.c \
-	led.c
+# project specific files
+SRC =	matrix.c \
+	    led.c
+
+ifdef KEYMAP
+    SRC := keymap_$(KEYMAP).c $(SRC)
+else
+    SRC := keymap_plain.c $(SRC)
+endif
 
 CONFIG_H = config.h
 
+## chip/board settings
+# - the next two should match the directories in
+#   <chibios>/os/hal/ports/$(MCU_FAMILY)/$(MCU_SERIES)
+# - For Teensies, FAMILY = KINETIS and SERIES is either
+#   KL2x (LC) or K20x (3.0,3.1,3.2).
+MCU_FAMILY = KINETIS
+MCU_SERIES = KL2x
 
-# MCU name, you MUST set this to match the board you are using
-# type "make clean" after changing this, so all files will be rebuilt
-#MCU = at90usb162       # Teensy 1.0
-#MCU = atmega32u4       # Teensy 2.0
-#MCU = at90usb646       # Teensy++ 1.0
-MCU = at90usb1286		# Teensy++ 2.0
+# Linker script to use
+# - it should exist either in <chibios>/os/common/ports/ARMCMx/compilers/GCC/ld/
+#   or <this_dir>/ld/
+# - NOTE: a custom ld script is needed for EEPROM on Teensy LC
+# - LDSCRIPT =
+#   - MKL26Z64 for Teensy LC
+#   - MK20DX128 for Teensy 3.0
+#   - MK20DX256 for Teensy 3.1 and 3.2
+MCU_LDSCRIPT = MKL26Z64
 
+# Startup code to use
+#  - it should exist in <chibios>/os/common/ports/ARMCMx/compilers/GCC/mk/
+# - STARTUP =
+#   - kl2x for Teensy LC
+#   - k20x5 for Teensy 3.0
+#   - k20x7 for Teensy 3.1 and 3.2
+MCU_STARTUP = kl2x
 
-# Processor frequency.
-#   Normally the first thing your program should do is set the clock prescaler,
-#   so your program will run at the correct speed.  You should also set this
-#   variable to same clock speed.  The _delay_ms() macro uses this, and many
-#   examples use this variable to calculate timings.  Do not add a "UL" here.
-F_CPU = 16000000
+# Board: it should exist either in <chibios>/os/hal/boards/
+#  or <this_dir>/boards
+# - BOARD =
+#   - PJRC_TEENSY_LC for Teensy LC
+#   - PJRC_TEENSY_3 for Teensy 3.0
+#   - PJRC_TEENSY_3_1 for Teensy 3.1 or 3.2
+BOARD = PJRC_TEENSY_LC
 
+# Cortex version
+# Teensy LC is cortex-m0plus; Teensy 3.x are cortex-m4
+MCU  = cortex-m0plus
+
+# ARM version, CORTEX-M0/M1 are 6, CORTEX-M3/M4/M7 are 7
+# I.e. 6 for Teensy LC; 7 for Teensy 3.x
+ARMV = 6
 
 # Build Options
 #   comment out to disable the options.
 #
-BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
-#MOUSEKEY_ENABLE = yes	# Mouse keys(+5000)
-EXTRAKEY_ENABLE = yes	# Audio control and System control(+600)
-CONSOLE_ENABLE = yes    # Console for debug
+BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration
+## (Note that for BOOTMAGIC on Teensy LC you have to use a custom .ld script.)
+MOUSEKEY_ENABLE = yes	# Mouse keys
+EXTRAKEY_ENABLE = yes	# Audio control and System control
+CONSOLE_ENABLE = yes	# Console for debug
 COMMAND_ENABLE = yes    # Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
-#NKRO_ENABLE = yes	# USB Nkey Rollover(+500)
-#PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
+#NKRO_ENABLE = yes	    # USB Nkey Rollover
 
-
-# Search Path
-VPATH += $(TARGET_DIR)
-VPATH += $(TMK_DIR)
-
-include $(TMK_DIR)/protocol/pjrc.mk
-include $(TMK_DIR)/common.mk
-include $(TMK_DIR)/rules.mk
-
-ansi: OPT_DEFS += -DLAYOUT_ANSI
-ansi: all
-
-ansi_150: OPT_DEFS += -DLAYOUT_ANSI_150
-ansi_150: all
-
-iso: OPT_DEFS += -DLAYOUT_ISO
-iso: all
-
-iso_150: OPT_DEFS += -DLAYOUT_ISO_150
-iso_150: all
-
-7bit: OPT_DEFS += -DLAYOUT_7BIT
-7bit: all
+include $(TMK_DIR)/tool/chibios/common.mk
+include $(TMK_DIR)/tool/chibios/chibios.mk

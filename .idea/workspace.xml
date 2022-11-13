@@ -1,105 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="all" />
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="build" />
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="PRE_MAKE_ALL_RULE_HOOK" />
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="Makefile" />
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="POST_MAKE_ALL_RULE_HOOK" />
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="lib" />
+      <config projectName="IBM-Model-M-native-USB-tmk_firmware" targetName="CLEAN_RULE_HOOK" />
+    </generated>
+  </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0e35059-be58-4be4-9603-2f004427c1dc" name="Default Changelist" comment="init laptop">
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_action.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_action_layer.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_action_macro.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_action_tapping.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_action_util.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_avr_bootloader.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_avr_eeconfig.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_avr_suspend.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_avr_timer.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_bootmagic.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_command.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_debug.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_hook.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_host.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_keyboard.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_keymap.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_print.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_common_util.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_keymap.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_led.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_matrix.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_protocol_pjrc_main.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_protocol_pjrc_pjrc.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_protocol_pjrc_usb.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_protocol_pjrc_usb_debug.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_protocol_pjrc_usb_extra.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.dep/obj_modelm_pjrc_protocol_pjrc_usb_keyboard.o.d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/led.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modelm_pjrc.elf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modelm_pjrc.hex" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modelm_pjrc.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_layer.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_layer.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_macro.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_macro.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_tapping.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_tapping.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_util.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_util.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/bootloader.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/bootloader.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/eeconfig.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/eeconfig.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/suspend.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/suspend.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/timer.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/timer.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/xprintf.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/xprintf.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/bootmagic.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/bootmagic.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/command.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/command.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/debug.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/debug.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/hook.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/hook.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/host.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/host.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/keyboard.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/keyboard.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/keymap.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/keymap.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/print.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/print.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/util.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/common/util.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/keymap.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/keymap.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/led.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/led.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/matrix.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/matrix.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/main.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/main.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/pjrc.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/pjrc.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_debug.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_debug.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_extra.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_extra.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_keyboard.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_keyboard.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.dep/crt0_v6m.o.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lst/crt0_v6m.lst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/obj/crt0_v6m.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/chconf.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/halconf.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/halconf_community.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mcuconf.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ibm_modelm_tmk_firmware.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.h" beforeDir="false" afterPath="$PROJECT_DIR$/config.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keymap.c" beforeDir="false" afterPath="$PROJECT_DIR$/keymap.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/keymap_common.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/led.c" beforeDir="false" afterPath="$PROJECT_DIR$/led.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/matrix.c" beforeDir="false" afterPath="$PROJECT_DIR$/matrix.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_layer.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_layer.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_macro.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_macro.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_tapping.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_tapping.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_util.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/action_util.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/bootloader.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/bootloader.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/eeconfig.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/eeconfig.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/suspend.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/suspend.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/timer.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/timer.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/xprintf.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/avr/xprintf.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/bootmagic.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/bootmagic.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/command.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/command.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/debug.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/debug.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/hook.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/hook.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/host.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/host.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/keyboard.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/keyboard.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/keymap.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/keymap.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/print.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/print.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/util.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/common/util.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/keymap.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/keymap.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/led.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/led.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/matrix.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/matrix.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/main.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/main.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/pjrc.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/pjrc.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_debug.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_debug.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_extra.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_extra.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_keyboard.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj_modelm_pjrc/protocol/pjrc/usb_keyboard.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tmk_keyboard" beforeDir="false" afterPath="$PROJECT_DIR$/tmk_keyboard" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,6 +101,11 @@
   </component>
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -124,6 +122,39 @@
   <component name="MacroExpansionManager">
     <option name="directoryName" value="e02of1dw" />
   </component>
+  <component name="MakefileLocalSettings">
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="IBM-Model-M-native-USB-tmk_firmware" />
+              <option name="path" value="$PROJECT_DIR$" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="ibm_modelm_tmk_firmware" />
+                <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2021" />
+    <option name="minorVersion" value="3.4" />
+  </component>
   <component name="ProjectId" id="1sRzyWG4HqXR6cobcmtchHORkjL" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -138,7 +169,6 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SONARLINT_PRECOMMIT_ANALYSIS" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
@@ -146,18 +176,77 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/tmk_keyboard/tmk_core/tool/chibios/ChibiOS-Contrib/testhal/KINETIS/TEENSY_LC/BOOTLOADER/halconf_community.h" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/tmk_keyboard/tmk_core/tool/chibios/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/mk" />
       <recent name="$PROJECT_DIR$/tmk_keyboard" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/tmk_keyboard/keyboard" />
+    </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Makefile Target.%.bin">
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
+    </configuration>
+    <configuration default="true" type="BIBTEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify-bibtex>
+        <compiler />
+        <compiler-path />
+        <compiler-arguments />
+        <envs />
+        <main-file>/</main-file>
+        <aux-dir>/</aux-dir>
+      </texify-bibtex>
+      <method v="2" />
+    </configuration>
+    <configuration name="CLEAN_RULE_HOOK" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="CLEAN_RULE_HOOK" CONFIG_NAME="CLEAN_RULE_HOOK" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Makefile" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="Makefile" CONFIG_NAME="Makefile" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="POST_MAKE_ALL_RULE_HOOK" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="POST_MAKE_ALL_RULE_HOOK" CONFIG_NAME="POST_MAKE_ALL_RULE_HOOK" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PRE_MAKE_ALL_RULE_HOOK" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="PRE_MAKE_ALL_RULE_HOOK" CONFIG_NAME="PRE_MAKE_ALL_RULE_HOOK" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="all" CONFIG_NAME="all" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="build" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="build" CONFIG_NAME="build" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="lib" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IBM-Model-M-native-USB-tmk_firmware" TARGET_NAME="lib" CONFIG_NAME="lib" version="1">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="EXTERNAL_TOOL_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify-external>
+        <program>PYTHONTEX</program>
+        <main-file />
+        <work-dir />
+      </texify-external>
+      <method v="2" />
     </configuration>
     <configuration name="/home/fly0ut" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -178,9 +267,55 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration default="true" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify>
+        <compiler>PDFLATEX</compiler>
+        <compiler-path />
+        <sumatra-path />
+        <pdf-viewer>NONE</pdf-viewer>
+        <viewer-command />
+        <compiler-arguments />
+        <envs />
+        <main-file />
+        <output-path>{projectDir}/out</output-path>
+        <auxil-path>{projectDir}/auxil</auxil-path>
+        <compile-twice>false</compile-twice>
+        <output-format>PDF</output-format>
+        <latex-distribution>TEXLIVE</latex-distribution>
+        <has-been-run>false</has-been-run>
+        <bib-run-config>[]</bib-run-config>
+        <makeindex-run-config>[]</makeindex-run-config>
+      </texify>
+      <method v="2" />
+    </configuration>
+    <configuration name="%.bin" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/tmk_keyboard/tmk_core/tool/chibios/ChibiOS/os/common/startup/ARMCMx/compilers/GCC/rules.mk" target="%.bin" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="MAKEINDEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify-makeindex>
+        <program>MAKEINDEX</program>
+        <main-file />
+        <command-line-args />
+        <work-dir />
+      </texify-makeindex>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Makefile Application.all" />
+      <item itemvalue="Makefile Application.build" />
+      <item itemvalue="Makefile Application.CLEAN_RULE_HOOK" />
+      <item itemvalue="Makefile Application.lib" />
+      <item itemvalue="Makefile Application.Makefile" />
+      <item itemvalue="Makefile Application.POST_MAKE_ALL_RULE_HOOK" />
+      <item itemvalue="Makefile Application.PRE_MAKE_ALL_RULE_HOOK" />
+      <item itemvalue="Makefile Target.%.bin" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle./home/fly0ut" />
+        <item itemvalue="Makefile Target.%.bin" />
       </list>
     </recent_temporary>
   </component>
@@ -197,6 +332,14 @@
       <workItem from="1626560167052" duration="727000" />
       <workItem from="1626629927466" duration="70000" />
       <workItem from="1626634852799" duration="30066000" />
+      <workItem from="1666705497880" duration="6258000" />
+      <workItem from="1666738856685" duration="2505000" />
+      <workItem from="1666881779934" duration="3381000" />
+      <workItem from="1666899017572" duration="13670000" />
+      <workItem from="1667153965548" duration="9730000" />
+      <workItem from="1668211982655" duration="3357000" />
+      <workItem from="1668221208657" duration="518000" />
+      <workItem from="1668377112758" duration="1480000" />
     </task>
     <task id="LOCAL-00001" summary="init laptop">
       <created>1626560303603</created>
@@ -223,12 +366,17 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

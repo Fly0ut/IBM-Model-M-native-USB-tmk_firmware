@@ -22,16 +22,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CONFIG_H
 #define CONFIG_H
 
+
 /*Teensy 2.0++ settings*/
 #define BOOTLOADER_SIZE 2048
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0xFEED
-#define PRODUCT_ID      0x6057
+#define PRODUCT_ID      0x6464
 #define DEVICE_VER      0x0001
-#define MANUFACTURER    "IBM"
-#define PRODUCT         "Model M"
 
+
+#define MANUFACTURER    "IBM"
+#define USBSTR_MANUFACTURER    'T', '\x00', 'M', '\x00', 'K', '\x00', ' ', '\x00', '\xc6', '\x00'
+#define PRODUCT         "Model M"
+#define USBSTR_PRODUCT         'C', '\x00', 'h', '\x00', 'i', '\x00', 'b', '\x00', 'i', '\x00', 'O', '\x00', 'S', '\x00', ' ', '\x00', 'T', '\x00', 'M', '\x00', 'K', '\x00', ' ', '\x00', 'I', '\x00', 'B', '\x00', 'M', '\x00', 'M', '\x00'
 /* message strings */
 #define DESCRIPTION     "t.m.k. keyboard firmware for IBM Model M Teensy 2.0++"
 
@@ -43,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_HAS_GHOST
 
 /* Set 0 if need no debouncing */
-#define DEBOUNCE    10
+#define DEBOUNCE    5
 
 /* Set LED brightness 0-255.
  * This have no effect if sleep LED is enabled. */
